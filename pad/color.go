@@ -22,6 +22,24 @@ var (
 	DimLightGreen  = Color{2, 1}
 	LightGreen     = Color{3, 1}
 	HighLightGreen = Color{3, 2}
+
+	AllColors = []Color{
+		DimRed,
+		NormalRed,
+		HighRed,
+		DimGreen,
+		NormalGreen,
+		HighGreen,
+		DimYellow,
+		NormalYellow,
+		HighYellow,
+		DimOrange,
+		NormalOrange,
+		HighOrange,
+		DimLightGreen,
+		LightGreen,
+		HighLightGreen,
+	}
 )
 
 type Color struct {

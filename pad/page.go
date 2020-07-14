@@ -6,11 +6,13 @@ var EmptyPage = Page{
 	ColorRepresentation: []Color{unsetColor, unsetColor, unsetColor, unsetColor, unsetColor, unsetColor, unsetColor, unsetColor},
 }
 
+type PageNumber byte
+
 type Page struct {
 	ColorRepresentation []Color
 }
 
-func NewPage(number byte) *Page {
+func NewPage(number PageNumber) *Page {
 	page := Page{
 		ColorRepresentation: make([]Color, 8, 8),
 	}
@@ -18,7 +20,7 @@ func NewPage(number byte) *Page {
 	for i := 0; i < 8; i++ {
 		c := Off
 
-		if hasBit(number, i) {
+		if hasBit(byte(number), i) {
 			c = setColor
 		}
 
@@ -46,7 +48,7 @@ func (p *Page) Light(pad Lighter) error {
 }
 
 // Number returns the numeric representation of this page
-func (p *Page) Number() byte {
+func (p *Page) Number() PageNumber {
 	var n byte
 	n = 0
 
@@ -56,7 +58,7 @@ func (p *Page) Number() byte {
 		}
 	}
 
-	return n
+	return PageNumber(n)
 }
 
 func (p *Page) Toggle(pos int) {
