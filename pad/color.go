@@ -1,44 +1,44 @@
 package pad
 
 var (
-	Off = Color{0, 0}
+	ColorOff = Color{0, 0}
 
-	DimRed    = Color{0, 1}
-	NormalRed = Color{0, 2}
-	HighRed   = Color{0, 3}
+	ColorDimRed    = Color{0, 1}
+	ColorNormalRed = Color{0, 2}
+	ColorHighRed   = Color{0, 3}
 
-	DimGreen    = Color{1, 0}
-	NormalGreen = Color{2, 0}
-	HighGreen   = Color{3, 0}
+	ColorDimGreen    = Color{1, 0}
+	ColorNormalGreen = Color{2, 0}
+	ColorHighGreen   = Color{3, 0}
 
-	DimYellow    = Color{1, 1}
-	NormalYellow = Color{2, 2}
-	HighYellow   = Color{3, 3}
+	ColorDimYellow    = Color{1, 1}
+	ColorNormalYellow = Color{2, 2}
+	ColorHighYellow   = Color{3, 3}
 
-	DimOrange    = Color{1, 2}
-	NormalOrange = Color{1, 3}
-	HighOrange   = Color{2, 3}
+	ColorDimOrange    = Color{1, 2}
+	ColorNormalOrange = Color{1, 3}
+	ColorHighOrange   = Color{2, 3}
 
-	DimLightGreen  = Color{2, 1}
-	LightGreen     = Color{3, 1}
-	HighLightGreen = Color{3, 2}
+	ColorDimLightGreen  = Color{2, 1}
+	ColorLightGreen     = Color{3, 1}
+	ColorHighLightGreen = Color{3, 2}
 
 	AllColors = []Color{
-		DimRed,
-		NormalRed,
-		HighRed,
-		DimGreen,
-		NormalGreen,
-		HighGreen,
-		DimYellow,
-		NormalYellow,
-		HighYellow,
-		DimOrange,
-		NormalOrange,
-		HighOrange,
-		DimLightGreen,
-		LightGreen,
-		HighLightGreen,
+		ColorDimRed,
+		ColorNormalRed,
+		ColorHighRed,
+		ColorDimGreen,
+		ColorNormalGreen,
+		ColorHighGreen,
+		ColorDimYellow,
+		ColorNormalYellow,
+		ColorHighYellow,
+		ColorDimOrange,
+		ColorNormalOrange,
+		ColorHighOrange,
+		ColorDimLightGreen,
+		ColorLightGreen,
+		ColorHighLightGreen,
 	}
 )
 

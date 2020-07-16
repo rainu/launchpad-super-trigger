@@ -1,7 +1,7 @@
 package pad
 
-var setColor = NormalGreen
-var unsetColor = Off
+var setColor = ColorNormalGreen
+var unsetColor = ColorOff
 var EmptyPage = Page{
 	ColorRepresentation: []Color{unsetColor, unsetColor, unsetColor, unsetColor, unsetColor, unsetColor, unsetColor, unsetColor},
 }
@@ -18,7 +18,7 @@ func NewPage(number PageNumber) *Page {
 	}
 
 	for i := 0; i < 8; i++ {
-		c := Off
+		c := ColorOff
 
 		if hasBit(byte(number), i) {
 			c = setColor

@@ -2,12 +2,14 @@ package main
 
 import (
 	"context"
+	"github.com/rainu/launchpad-super-trigger/gfx"
 	launchpad "github.com/rainu/launchpad-super-trigger/pad"
 	"go.uber.org/zap"
 	"os"
 	"os/signal"
 	"sync"
 	"syscall"
+	"time"
 )
 
 func main() {
@@ -18,9 +20,26 @@ func main() {
 	zap.ReplaceGlobals(logger)
 	defer zap.L().Sync()
 
-	pad, err := launchpad.NewLaunchpadSuperTrigger()
+	dispatcher := launchpad.TriggerDispatcher{}
+	dispatcher.AddPageHandler(&launchpad.SimpleHandler{
+		TriggerFn: func(lighter launchpad.Lighter, page launchpad.PageNumber, x int, y int) error {
+
+			renderer := gfx.Renderer{lighter}
+			renderer.Star(x, y, launchpad.ColorHighGreen, 250*time.Millisecond)
+
+			return nil
+		},
+		PageEnterFn: func(lighter launchpad.Lighter, page launchpad.PageNumber) error {
+			renderer := gfx.Renderer{lighter}
+
+			renderer.Boom(4, 4, launchpad.ColorHighGreen, 50*time.Millisecond)
+
+			return nil
+		},
+	}, 1, 3)
+	pad, err := launchpad.NewLaunchpadSuperTrigger(dispatcher.Handle)
 	if err != nil {
-		zap.L().Fatal("error while openning connection to launchpad: %v", zap.Error(err))
+		zap.L().Fatal("error while opening connection to launchpad: %v", zap.Error(err))
 	}
 	defer pad.Close()
 

@@ -8,7 +8,9 @@ import (
 	"sync"
 )
 
-type TriggerHandleFunc func(Lighter, PageNumber, int, int) error
+// TriggerHandleFunc will called each time a hit was made.
+// If the hit was outside the trigger area x and y will be -1!
+type TriggerHandleFunc func(lighter Lighter, page PageNumber, x int, y int) error
 
 type LaunchpadSuperTrigger struct {
 	pad         *launchpad.Launchpad
@@ -23,13 +25,18 @@ func NewLaunchpadSuperTrigger(handler TriggerHandleFunc) (*LaunchpadSuperTrigger
 		return nil, err
 	}
 
+	page := NewPage(0)
+
 	return &LaunchpadSuperTrigger{
 		pad: pad,
-		lighter: &ThreadSafeLighter{
-			mux:      sync.Mutex{},
-			delegate: pad,
+		lighter: &triggerAreaLighter{
+			page: page,
+			delegate: &threadSafeLighter{
+				mux:      sync.Mutex{},
+				delegate: pad,
+			},
 		},
-		currentPage: NewPage(0),
+		currentPage: page,
 		handle:      handler,
 	}, nil
 }
@@ -49,18 +56,20 @@ func (l *LaunchpadSuperTrigger) Run(ctx context.Context) {
 
 			if IsPageHit(hit) {
 				l.currentPage.Toggle(hit.X)
-				if err := l.pad.Clear(); err != nil {
-					zap.L().Error("Could not clear the pad!", zap.Error(err))
-				}
-				if err := l.currentPage.Light(l.lighter); err != nil {
-					zap.L().Error("Could not light the pad!", zap.Error(err))
-				}
-
 				zap.L().Info(fmt.Sprintf("Switched to page: %d", l.currentPage.Number()))
+				if err := l.handle(l.lighter, l.currentPage.Number(), -1, -1); err != nil {
+					zap.L().Error("Error while handling hit!", zap.Error(err))
+				}
 			} else if IsPadHit(hit) {
 				if err := l.handle(l.lighter, l.currentPage.Number(), hit.X, hit.Y); err != nil {
 					zap.L().Error("Error while handling hit!", zap.Error(err))
 				}
+			}
+
+			//light the page buttons AFTER the handler, so handlers could use "lighter.Clear()" without
+			//fear to lose the page lights
+			if err := l.currentPage.Light(l.lighter); err != nil {
+				zap.L().Error("Could not light the pad!", zap.Error(err))
 			}
 		case <-ctx.Done():
 			//context closed -> stop running
