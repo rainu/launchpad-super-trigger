@@ -6,19 +6,19 @@ import (
 )
 
 func (e Renderer) HorizontalProgressbar(y, percent int, dir Direction, fill, empty pad.Color) error {
-	return e.horizontalQuadrantProgressbar(y, 0, 8, percent, dir, fill, empty)
+	return e.horizontalQuadrantProgressbar(y, minX, padLength, percent, dir, fill, empty)
 }
 
 func (e Renderer) HorizontalQuadrantProgressbar(q Quadrant, y, percent int, dir Direction, fill, empty pad.Color) error {
 	switch q {
 	case FirstQuadrant:
-		return e.horizontalQuadrantProgressbar(y, 4, 8, percent, dir, fill, empty)
+		return e.horizontalQuadrantProgressbar(y, 4, padLength, percent, dir, fill, empty)
 	case SecondQuadrant:
-		return e.horizontalQuadrantProgressbar(y, 0, 4, percent, dir, fill, empty)
+		return e.horizontalQuadrantProgressbar(y, minX, 4, percent, dir, fill, empty)
 	case ThirdQuadrant:
-		return e.horizontalQuadrantProgressbar(y+4, 0, 4, percent, dir, fill, empty)
+		return e.horizontalQuadrantProgressbar(y+4, minX, 4, percent, dir, fill, empty)
 	case ForthQuadrant:
-		return e.horizontalQuadrantProgressbar(y+4, 4, 8, percent, dir, fill, empty)
+		return e.horizontalQuadrantProgressbar(y+4, 4, padLength, percent, dir, fill, empty)
 	default:
 		return errors.New("invalid quadrant")
 	}
@@ -42,19 +42,19 @@ func (e Renderer) horizontalQuadrantProgressbar(y, xFrom, xUntil, percent int, d
 }
 
 func (e Renderer) VerticalProgressbar(y, percent int, dir Direction, fill, empty pad.Color) error {
-	return e.verticalQuadrantProgressbar(y, 8, 0, percent, dir, fill, empty)
+	return e.verticalQuadrantProgressbar(y, padHeight, minY, percent, dir, fill, empty)
 }
 
 func (e Renderer) VerticalQuadrantProgressbar(q Quadrant, x, percent int, dir Direction, fill, empty pad.Color) error {
 	switch q {
 	case FirstQuadrant:
-		return e.verticalQuadrantProgressbar(x+4, 4, 0, percent, dir, fill, empty)
+		return e.verticalQuadrantProgressbar(x+4, 4, minY, percent, dir, fill, empty)
 	case SecondQuadrant:
-		return e.verticalQuadrantProgressbar(x, 4, 0, percent, dir, fill, empty)
+		return e.verticalQuadrantProgressbar(x, 4, minY, percent, dir, fill, empty)
 	case ThirdQuadrant:
-		return e.verticalQuadrantProgressbar(x, 8, 4, percent, dir, fill, empty)
+		return e.verticalQuadrantProgressbar(x, padHeight, 4, percent, dir, fill, empty)
 	case ForthQuadrant:
-		return e.verticalQuadrantProgressbar(x+4, 8, 4, percent, dir, fill, empty)
+		return e.verticalQuadrantProgressbar(x+4, padHeight, 4, percent, dir, fill, empty)
 	default:
 		return errors.New("invalid quadrant")
 	}

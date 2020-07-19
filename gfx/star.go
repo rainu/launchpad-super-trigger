@@ -13,8 +13,8 @@ func (e Renderer) Star(x, y int, color pad.Color, delay time.Duration) context.C
 	return e.Sequence(delay, spreadSequence...)
 }
 
-func buildStarSeq(x int, y int, color pad.Color) [][]FramePixel {
-	sequences := make([][][]FramePixel, 8)
+func buildStarSeq(x int, y int, color pad.Color) Sequence {
+	sequences := make([]Sequence, 8)
 
 	sequences[0] = buildBeamSeq(x, y, color, NorthSpreadDirection)
 	sequences[1] = buildBeamSeq(x, y, color, NorthWestSpreadDirection)
@@ -32,10 +32,10 @@ func buildStarSeq(x int, y int, color pad.Color) [][]FramePixel {
 		}
 	}
 
-	seq := make([][]FramePixel, 0, maxFrameCount)
+	seq := make(Sequence, 0, maxFrameCount)
 
 	for frame := 0; frame < maxFrameCount; frame++ {
-		joinedFrame := make([]FramePixel, 0, maxFrameCount)
+		joinedFrame := make(Frame, 0, maxFrameCount)
 
 		for _, subSeq := range sequences {
 			if len(subSeq) > frame {
@@ -46,7 +46,7 @@ func buildStarSeq(x int, y int, color pad.Color) [][]FramePixel {
 			}
 		}
 
-		joinedFrame = joinPixels(joinedFrame...)
+		joinedFrame = mergePixels(joinedFrame...)
 		seq = append(seq, joinedFrame)
 	}
 

@@ -7,6 +7,30 @@ import (
 
 // Fill fills the given rectangle with the given color
 func (e Renderer) Fill(x0, y0, x1, y1 int, color pad.Color) error {
+	frame := buildFill(x0, y0, x1, y1, color)
+	for _, pixel := range frame {
+		if err := pixel.Light(e); err != nil {
+			return err
+		}
+	}
+
+	return nil
+}
+
+func buildFill(x0, y0, x1, y1 int, color pad.Color) Frame {
+	frame := make(Frame, 0, 64)
+
+	appendPixel := func(x, y int) {
+		if x < minX || y < minY || x > maxX || y > maxY {
+			return
+		}
+
+		frame = append(frame, FramePixel{
+			X:     x,
+			Y:     y,
+			Color: color,
+		})
+	}
 
 	if x1 >= x0 && y1 >= y0 {
 		// +-->
@@ -14,9 +38,7 @@ func (e Renderer) Fill(x0, y0, x1, y1 int, color pad.Color) error {
 		// v
 		for x := x0; x <= x1; x++ {
 			for y := y0; y <= y1; y++ {
-				if err := color.Light(e, x, y); err != nil {
-					return err
-				}
+				appendPixel(x, y)
 			}
 		}
 	} else if x1 <= x0 && y1 >= y0 {
@@ -25,9 +47,7 @@ func (e Renderer) Fill(x0, y0, x1, y1 int, color pad.Color) error {
 		//    v
 		for x := x0; x >= x1; x-- {
 			for y := y0; y <= y1; y++ {
-				if err := color.Light(e, x, y); err != nil {
-					return err
-				}
+				appendPixel(x, y)
 			}
 		}
 	} else if x1 >= x0 && y1 <= y0 {
@@ -36,9 +56,7 @@ func (e Renderer) Fill(x0, y0, x1, y1 int, color pad.Color) error {
 		// +-->
 		for x := x0; x <= x1; x++ {
 			for y := y0; y >= y1; y-- {
-				if err := color.Light(e, x, y); err != nil {
-					return err
-				}
+				appendPixel(x, y)
 			}
 		}
 	} else {
@@ -47,14 +65,12 @@ func (e Renderer) Fill(x0, y0, x1, y1 int, color pad.Color) error {
 		// <--+
 		for x := x1; x >= x0; x-- {
 			for y := y0; y >= y1; y-- {
-				if err := color.Light(e, x, y); err != nil {
-					return err
-				}
+				appendPixel(x, y)
 			}
 		}
 	}
 
-	return nil
+	return frame
 }
 
 // FillQuadrant fills the given quadrant with the given color
@@ -64,13 +80,13 @@ func (e Renderer) Fill(x0, y0, x1, y1 int, color pad.Color) error {
 func (e Renderer) FillQuadrant(q Quadrant, color pad.Color) error {
 	switch q {
 	case FirstQuadrant:
-		return e.Fill(4, 0, 7, 3, color)
+		return e.Fill(4, minY, maxY, 3, color)
 	case SecondQuadrant:
-		return e.Fill(0, 0, 3, 3, color)
+		return e.Fill(minX, minY, 3, 3, color)
 	case ThirdQuadrant:
-		return e.Fill(0, 4, 3, 7, color)
+		return e.Fill(minX, 4, 3, maxY, color)
 	case ForthQuadrant:
-		return e.Fill(4, 4, 7, 7, color)
+		return e.Fill(4, 4, maxX, maxY, color)
 	default:
 		return errors.New("invalid quadrant")
 	}

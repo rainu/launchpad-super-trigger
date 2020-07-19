@@ -13,8 +13,8 @@ func (e Renderer) Boom(x, y int, color pad.Color, delay time.Duration) context.C
 	return e.Sequence(delay, boomSequence...)
 }
 
-func buildBoomSeq(x int, y int, color pad.Color) [][]FramePixel {
-	sequences := make([][][]FramePixel, 8)
+func buildBoomSeq(x int, y int, color pad.Color) Sequence {
+	sequences := make([]Sequence, 8)
 
 	sequences[0] = buildSpreadSeq(x, y, color, NorthSpreadDirection)
 	sequences[1] = buildSpreadSeq(x, y, color, NorthWestSpreadDirection)
@@ -25,10 +25,10 @@ func buildBoomSeq(x int, y int, color pad.Color) [][]FramePixel {
 	sequences[6] = buildSpreadSeq(x, y, color, SouthWestSpreadDirection)
 	sequences[7] = buildSpreadSeq(x, y, color, WestSpreadDirection)
 
-	seq := make([][]FramePixel, 0, 9)
+	seq := make(Sequence, 0, 9)
 
 	for frame := 0; ; frame++ {
-		joinedFrame := make([]FramePixel, 0, 9)
+		joinedFrame := make(Frame, 0, 9)
 
 		for _, subSeq := range sequences {
 			if len(subSeq) > frame {
@@ -39,7 +39,7 @@ func buildBoomSeq(x int, y int, color pad.Color) [][]FramePixel {
 		if len(joinedFrame) == 0 {
 			break
 		}
-		joinedFrame = joinPixels(joinedFrame...)
+		joinedFrame = mergePixels(joinedFrame...)
 		seq = append(seq, joinedFrame)
 	}
 

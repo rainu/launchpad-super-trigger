@@ -6,10 +6,12 @@ import (
 	"time"
 )
 
+type Sequence []Frame
+
 var activeSequenceCancelFunc context.CancelFunc
 
 // Sequence draw each given frame after the given delay.
-func (e Renderer) Sequence(delay time.Duration, frames ...[]FramePixel) context.CancelFunc {
+func (e Renderer) Sequence(delay time.Duration, frames ...Frame) context.CancelFunc {
 	ctx, cancelFunc := context.WithCancel(context.Background())
 
 	//check if there is already an active sequence, if so cancel them
