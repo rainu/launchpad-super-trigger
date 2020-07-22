@@ -34,9 +34,19 @@ type TriggerDispatcher struct {
 	currentPage      PageNumber
 	triggerDelegates map[string]Handler
 	pageDelegates    map[PageNumber]Handler
+	firstEnterCalled bool
 }
 
 func (t *TriggerDispatcher) Handle(lighter Lighter, page PageNumber, x int, y int) error {
+	if !t.firstEnterCalled {
+		if handler := t.lookupPageHandler(page); handler != nil {
+			if err := handler.OnPageEnter(lighter, page); err != nil {
+				return err
+			}
+		}
+		t.firstEnterCalled = true
+	}
+
 	if t.currentPage != page {
 		lastPage := t.currentPage
 		t.currentPage = page

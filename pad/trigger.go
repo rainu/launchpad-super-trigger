@@ -46,6 +46,9 @@ func (l *LaunchpadSuperTrigger) Run(ctx context.Context) {
 		zap.L().Error("Error while clearing the launchpad!", zap.Error(err))
 		return
 	}
+	if err := l.handle(l.lighter, l.currentPage.Number(), -1, -1); err != nil {
+		zap.L().Error("Error while handling hit!", zap.Error(err))
+	}
 
 	hitChannel := l.pad.Listen()
 
