@@ -27,15 +27,25 @@ actors:
 	rest:
 		test:
 			url: "http://localhost:1312"
+	combined:
+		c-test:
+			parallel: true
+			actors:
+				- test
+				- test
 layout:
 	pages:
 		0:
 			trigger:
 				"0,0":
-					actor: test`
+					actor: c-test`
 	configContent = strings.ReplaceAll(configContent, "\t", " ")
 
 	dispatcher, err := config.ConfigureDispatcher(strings.NewReader(configContent))
+	if err != nil {
+		zap.L().Fatal("error while opening setup launchpad configuration: %v", zap.Error(err))
+	}
+
 	dispatcher.AddPageHandler(&launchpad.SimpleHandler{
 		TriggerFn: func(lighter launchpad.Lighter, page launchpad.PageNumber, x int, y int) error {
 
@@ -52,10 +62,6 @@ layout:
 			return nil
 		},
 	}, 1, 3)
-
-	if err != nil {
-		zap.L().Fatal("error while opening setup launchpad configuration: %v", zap.Error(err))
-	}
 
 	pad, err := launchpad.NewLaunchpadSuperTrigger(dispatcher.Handle)
 	if err != nil {

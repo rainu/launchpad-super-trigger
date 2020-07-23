@@ -7,7 +7,8 @@ type Config struct {
 }
 
 type Actors struct {
-	Rest map[string]RestActor `yaml:"rest,omitempty" validate:"dive"`
+	Rest     map[string]RestActor     `yaml:"rest,omitempty" validate:"dive"`
+	Combined map[string]CombinedActor `yaml:"combined,omitempty" validate:"dive"`
 }
 
 type RestActor struct {
@@ -17,6 +18,11 @@ type RestActor struct {
 	BodyB64  string              `yaml:"bodyBase64" validate:"omitempty,base64"`
 	BodyPath string              `yaml:"bodyPath" validate:"omitempty,file"`
 	BodyRaw  string              `yaml:"body"`
+}
+
+type CombinedActor struct {
+	Actor    []string `yaml:"actors" validate:"gte=2,dive,actor"`
+	Parallel bool     `yaml:"parallel"`
 }
 
 type Listeners struct {

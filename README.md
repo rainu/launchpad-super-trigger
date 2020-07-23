@@ -44,6 +44,9 @@ layout:
 | actors.rest[*name*].body | - | false | The body content for the http request. |
 | actors.rest[*name*].bodyBase64 | - | false | The body content for the http request encoded in base64. |
 | actors.rest[*name*].bodyPath | - | false | The body file for the http request. |
+| actors.combined | - | false | Contains all available combined actors. An combined actor will call other actors (sequential or in parallel). |
+| actors.combined[*name*].actors | - | **true** | The list of underlying actor names. Must be greater or equal than 2! |
+| actors.combined[*name*].parallel | false | false | How should the underlying actors be called. If true they will be called parallel. Otherwise the will be called sequential. |
 | layout | - | false | Contains all layout settings. |
 | layout.pages | - | false | Contains all page settings. |
 | layout.pages[*pageNumber*] | - | false | Contains a page setting. |

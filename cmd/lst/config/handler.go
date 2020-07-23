@@ -80,6 +80,8 @@ func (p *pageHandler) OnTrigger(lighter pad.Lighter, number pad.PageNumber, x in
 			}
 			err := delegate.Do(ctx)
 			if err != nil {
+				zap.L().Error("Actor returns an error: %w", zap.Error(err))
+
 				if err := p.colorSettings[coord{x, y}].Failed.Light(lighter, x, y); err != nil {
 					zap.L().Debug("Could not light the pad!", zap.Error(err))
 				}

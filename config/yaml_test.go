@@ -58,6 +58,70 @@ actors:
 			},
 		},
 		{
+			`simple combined`,
+			`
+actors:
+	rest:
+		test:
+			url: "http://localhost:1312"
+	combined:
+		c-test:
+			actors:
+				- test
+				- test`,
+			Config{
+				Actors: Actors{
+					Rest: map[string]RestActor{
+						"test": {
+							URL: "http://localhost:1312",
+						},
+					},
+					Combined: map[string]CombinedActor{
+						"c-test": {
+							Actor:    []string{"test", "test"},
+							Parallel: false,
+						},
+					},
+				},
+			},
+			[]string{},
+		},
+		{
+			`simple validation`,
+			`
+actors:
+	rest:
+		test:
+			url: "http://localhost:1312"
+	combined:
+		c-test:
+			actors:
+				- test
+				- doesNotExists
+		c-test2:
+			actors:
+				- test`,
+			Config{
+				Actors: Actors{
+					Rest: map[string]RestActor{
+						"test": {
+							URL: "http://localhost:1312",
+						},
+					},
+					Combined: map[string]CombinedActor{
+						"c-test": {
+							Actor:    []string{"test", "test"},
+							Parallel: false,
+						},
+					},
+				},
+			},
+			[]string{
+				`Key: 'Config.Actors.Combined[c-test].Actor[1]'`,
+				`Key: 'Config.Actors.Combined[c-test2].Actor'`,
+			},
+		},
+		{
 			`simple layout`,
 			`
 actors:

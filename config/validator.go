@@ -62,9 +62,14 @@ func validate(cfg *Config) error {
 	}
 	err = configValidator.RegisterValidation("actor", func(fl validator.FieldLevel) bool {
 		actorName := fl.Field().String()
-		_, found := cfg.Actors.Rest[actorName]
+		if _, found := cfg.Actors.Rest[actorName]; found {
+			return true
+		}
+		if _, found := cfg.Actors.Combined[actorName]; found {
+			return true
+		}
 
-		return found
+		return false
 	})
 	if err != nil {
 		panic(err)
