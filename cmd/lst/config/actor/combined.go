@@ -17,9 +17,9 @@ func buildCombined(actors map[string]actor.Actor, combinedActors map[string]conf
 		var handler combinedActor
 
 		if cActor.Parallel {
-			handler = &actor.ParallelActor{}
+			handler = &actor.Parallel{}
 		} else {
-			handler = &actor.SequentialActor{}
+			handler = &actor.Sequential{}
 		}
 
 		for _, actorName := range cActor.Actor {

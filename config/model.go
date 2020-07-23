@@ -1,5 +1,9 @@
 package config
 
+import (
+	"time"
+)
+
 type Config struct {
 	Actors    Actors    `yaml:"actors"`
 	Listeners Listeners `yaml:"listeners"`
@@ -9,6 +13,8 @@ type Config struct {
 type Actors struct {
 	Rest     map[string]RestActor     `yaml:"rest,omitempty" validate:"dive"`
 	Combined map[string]CombinedActor `yaml:"combined,omitempty" validate:"dive"`
+
+	GfxBlink map[string]GfxBlinkActor `yaml:"gfxBlink,omitempty" validate:"dive"`
 }
 
 type RestActor struct {
@@ -25,6 +31,13 @@ type CombinedActor struct {
 	Parallel bool     `yaml:"parallel"`
 }
 
+type GfxBlinkActor struct {
+	ColorOn  Color         `yaml:"on" validate:"color,required"`
+	ColorOff Color         `yaml:"off" validate:"color"`
+	Interval time.Duration `yaml:"interval"`
+	Duration time.Duration `yaml:"duration"`
+}
+
 type Listeners struct {
 }
 
@@ -33,7 +46,7 @@ type Layout struct {
 }
 
 type Page struct {
-	Trigger map[string]Trigger `yaml:"trigger" validate:"dive,keys,coord,endkeys,required"`
+	Trigger map[Coordinate]Trigger `yaml:"trigger" validate:"dive,keys,coord,endkeys,required"`
 }
 
 type Trigger struct {
@@ -42,8 +55,8 @@ type Trigger struct {
 }
 
 type ColorSettings struct {
-	Ready    string `yaml:"ready" validate:"color"`
-	Progress string `yaml:"progress" validate:"color"`
-	Success  string `yaml:"success" validate:"color"`
-	Failed   string `yaml:"failed" validate:"color"`
+	Ready    Color `yaml:"ready" validate:"color"`
+	Progress Color `yaml:"progress" validate:"color"`
+	Success  Color `yaml:"success" validate:"color"`
+	Failed   Color `yaml:"failed" validate:"color"`
 }

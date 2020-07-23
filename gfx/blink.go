@@ -20,35 +20,42 @@ func (e Renderer) Blink(x, y int, on, off pad.Color, interval, duration time.Dur
 	}
 	activeBlinks[coord{x, y}] = cancelFunc
 
-	ticker := time.NewTicker(interval)
-	timer := time.NewTimer(duration)
 	go func() {
-		defer ticker.Stop()
-		defer timer.Stop()
-		defer off.Light(e, x, y)
-
-		currentColor := on
-
-		for {
-			select {
-			case <-ticker.C:
-				if err := currentColor.Light(e, x, y); err != nil {
-					zap.L().Error("Could not light the pad!", zap.Error(err))
-				}
-
-				if currentColor.Ordinal() == on.Ordinal() {
-					currentColor = off
-				} else {
-					currentColor = on
-				}
-			case <-timer.C:
-				return
-			case <-ctx.Done():
-				return
-			}
+		err := e.BlinkBlocking(x, y, on, off, interval, duration, ctx)
+		if err != nil {
+			zap.L().Error("Error while gfx blink!", zap.Error(err))
 		}
-
 	}()
 
 	return cancelFunc
+}
+
+func (e Renderer) BlinkBlocking(x, y int, on, off pad.Color, interval, duration time.Duration, ctx context.Context) error {
+	ticker := time.NewTicker(interval)
+	timer := time.NewTimer(duration)
+
+	defer ticker.Stop()
+	defer timer.Stop()
+	defer off.Light(e, x, y)
+
+	currentColor := on
+
+	for {
+		select {
+		case <-ticker.C:
+			if err := currentColor.Light(e, x, y); err != nil {
+				return fmt.Errorf("could not light the pad: %w", err)
+			}
+
+			if currentColor.Ordinal() == on.Ordinal() {
+				currentColor = off
+			} else {
+				currentColor = on
+			}
+		case <-timer.C:
+			return nil
+		case <-ctx.Done():
+			return ctx.Err()
+		}
+	}
 }

@@ -6,8 +6,6 @@ import (
 	"github.com/rainu/launchpad-super-trigger/config"
 	"github.com/rainu/launchpad-super-trigger/pad"
 	"go.uber.org/zap"
-	"strconv"
-	"strings"
 	"sync"
 )
 
@@ -78,7 +76,13 @@ func (p *pageHandler) OnTrigger(lighter pad.Lighter, number pad.PageNumber, x in
 			if err := p.colorSettings[coord{x, y}].Progress.Light(lighter, x, y); err != nil {
 				zap.L().Debug("Could not light the pad!", zap.Error(err))
 			}
-			err := delegate.Do(ctx)
+			err := delegate.Do(actor.Context{
+				Lighter: lighter,
+				Context: ctx,
+				Page:    number,
+				HitX:    x,
+				HitY:    y,
+			})
 			if err != nil {
 				zap.L().Error("Actor returns an error: %w", zap.Error(err))
 
@@ -122,13 +126,8 @@ func (p *pageHandler) OnPageLeave(lighter pad.Lighter, number pad.PageNumber) er
 	return nil
 }
 
-func convertCoordinate(rawCoordinate string) coord {
-	split := strings.Split(rawCoordinate, ",")
-	x, err := strconv.Atoi(split[0])
-	if err != nil {
-		panic(err)
-	}
-	y, err := strconv.Atoi(split[1])
+func convertCoordinate(coordinate config.Coordinate) coord {
+	x, y, err := coordinate.Coordinate()
 	if err != nil {
 		panic(err)
 	}
@@ -145,23 +144,10 @@ func convertColorSettings(settings *config.ColorSettings) ColorSettings {
 	}
 }
 
-func convertColor(color string) pad.Color {
-	if color == "" {
-		return pad.ColorOff
-	}
-
-	split := strings.Split(color, ",")
-	r, err := strconv.Atoi(split[0])
+func convertColor(color config.Color) pad.Color {
+	c, err := color.Color()
 	if err != nil {
 		panic(err)
 	}
-	g, err := strconv.Atoi(split[1])
-	if err != nil {
-		panic(err)
-	}
-
-	return pad.Color{
-		Green: g,
-		Red:   r,
-	}
+	return c
 }

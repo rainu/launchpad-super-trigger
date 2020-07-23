@@ -47,6 +47,11 @@ layout:
 | actors.combined | - | false | Contains all available combined actors. An combined actor will call other actors (sequential or in parallel). |
 | actors.combined[*name*].actors | - | **true** | The list of underlying actor names. Must be greater or equal than 2! |
 | actors.combined[*name*].parallel | false | false | How should the underlying actors be called. If true they will be called parallel. Otherwise the will be called sequential. |
+| actors.gfxBlink | - | false | Contains all available gfx blink actors. A blink actor will draw blinking pads. |
+| actors.gfxBlink[*name*].on | - | true | The on *color*. |
+| actors.gfxBlink[*name*].off | 0,0 | false | The off *color*. |
+| actors.gfxBlink[*name*].interval | 1s | false | The interval of blink animation. |
+| actors.gfxBlink[*name*].duration | until page leave | false | The duration of the blink interval. |
 | layout | - | false | Contains all layout settings. |
 | layout.pages | - | false | Contains all page settings. |
 | layout.pages[*pageNumber*] | - | false | Contains a page setting. |

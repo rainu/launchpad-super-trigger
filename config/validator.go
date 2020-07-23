@@ -2,73 +2,46 @@ package config
 
 import (
 	"gopkg.in/go-playground/validator.v9"
-	"strconv"
-	"strings"
+	"reflect"
 )
 
 func validate(cfg *Config) error {
 	configValidator := validator.New()
 	err := configValidator.RegisterValidation("coord", func(fl validator.FieldLevel) bool {
 		sVal := fl.Field().String()
-		split := strings.Split(sVal, ",")
-		if len(split) != 2 {
-			return false
-		}
-		x, err := strconv.Atoi(split[0])
-		if err != nil {
-			return false
-		}
-		if x < 0 || x > 7 {
-			return false
-		}
-		y, err := strconv.Atoi(split[1])
-		if err != nil {
-			return false
-		}
-		if y < 0 || y > 7 {
-			return false
-		}
+		_, _, err := Coordinate(sVal).Coordinate()
 
-		return true
+		return err == nil
 	})
 	if err != nil {
 		panic(err)
 	}
 	err = configValidator.RegisterValidation("color", func(fl validator.FieldLevel) bool {
 		sVal := fl.Field().String()
-		split := strings.Split(sVal, ",")
-		if len(split) != 2 {
-			return false
-		}
-		r, err := strconv.Atoi(split[0])
-		if err != nil {
-			return false
-		}
-		if r < 0 || r > 3 {
-			return false
-		}
-		g, err := strconv.Atoi(split[1])
-		if err != nil {
-			return false
-		}
-		if g < 0 || g > 3 {
-			return false
-		}
+		_, err := Color(sVal).Color()
 
-		return true
+		return err == nil
 	})
 	if err != nil {
 		panic(err)
 	}
 	err = configValidator.RegisterValidation("actor", func(fl validator.FieldLevel) bool {
 		actorName := fl.Field().String()
-		if _, found := cfg.Actors.Rest[actorName]; found {
-			return true
-		}
-		if _, found := cfg.Actors.Combined[actorName]; found {
-			return true
+
+		refActor := reflect.ValueOf(cfg.Actors)
+		knownActors := map[string]bool{}
+
+		for i := 0; i < refActor.NumField(); i++ {
+			if refActor.Field(i).Kind() == reflect.Map {
+				for _, a := range refActor.Field(i).MapKeys() {
+					knownActors[a.String()] = true
+				}
+			}
 		}
 
+		if _, found := knownActors[actorName]; found {
+			return true
+		}
 		return false
 	})
 	if err != nil {

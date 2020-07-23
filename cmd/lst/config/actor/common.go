@@ -10,6 +10,7 @@ func BuildActors(parsedConfig *config.Config) map[string]actor.Actor {
 
 	buildRest(handler, parsedConfig.Actors.Rest)
 	buildCombined(handler, parsedConfig.Actors.Combined)
+	buildGfxBlink(handler, parsedConfig.Actors.GfxBlink)
 
 	return handler
 }

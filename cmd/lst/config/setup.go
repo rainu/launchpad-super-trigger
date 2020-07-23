@@ -14,14 +14,14 @@ func ConfigureDispatcher(configReader io.Reader) (*pad.TriggerDispatcher, error)
 	}
 
 	dispatcher := &pad.TriggerDispatcher{}
-	restHandler := configActor.BuildActors(parsedConfig)
+	actors := configActor.BuildActors(parsedConfig)
 
 	for pageNumber, page := range parsedConfig.Layout.Pages {
 		handler := &pageHandler{
 			pageNumber: pad.PageNumber(pageNumber),
 			page:       page,
 		}
-		handler.Init(restHandler)
+		handler.Init(actors)
 		dispatcher.AddPageHandler(handler, handler.pageNumber)
 	}
 

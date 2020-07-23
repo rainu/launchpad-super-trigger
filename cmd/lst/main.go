@@ -33,12 +33,23 @@ actors:
 			actors:
 				- test
 				- test
+	gfxBlink:
+		blink_0:
+			on: 1,1
+			off: 3,3
+			interval: 500ms
+			duration: 10s
 layout:
 	pages:
 		0:
 			trigger:
 				"0,0":
-					actor: c-test`
+					actor: c-test
+				"1,0":
+					actor: blink_0
+					color:
+						ready: 0,0
+						success: 0,0`
 	configContent = strings.ReplaceAll(configContent, "\t", " ")
 
 	dispatcher, err := config.ConfigureDispatcher(strings.NewReader(configContent))

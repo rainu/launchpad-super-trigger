@@ -4,6 +4,7 @@ import (
 	"github.com/stretchr/testify/assert"
 	"strings"
 	"testing"
+	"time"
 )
 
 func TestReadConfigFile(t *testing.T) {
@@ -87,7 +88,7 @@ actors:
 			[]string{},
 		},
 		{
-			`simple validation`,
+			`combined validation`,
 			`
 actors:
 	rest:
@@ -122,6 +123,44 @@ actors:
 			},
 		},
 		{
+			`simple gfx blink`,
+			`
+actors:
+	gfxBlink:
+		bl:
+			on: 1,1
+			off: 3,3
+			interval: 500ms
+			duration: 10s`,
+			Config{
+				Actors: Actors{
+					GfxBlink: map[string]GfxBlinkActor{
+						"bl": {
+							ColorOn:  "1,1",
+							ColorOff: "3,3",
+							Interval: 500 * time.Millisecond,
+							Duration: 10 * time.Second,
+						},
+					},
+				},
+			},
+			[]string{},
+		},
+		{
+			`validate gfx blink`,
+			`
+actors:
+	gfxBlink:
+		bl:
+			on: 1,
+			off: 3,9`,
+			Config{},
+			[]string{
+				`Key: 'Config.Actors.GfxBlink[bl].ColorOn'`,
+				`Key: 'Config.Actors.GfxBlink[bl].ColorOff'`,
+			},
+		},
+		{
 			`simple layout`,
 			`
 actors:
@@ -150,7 +189,7 @@ layout:
 				Layout: Layout{
 					Pages: map[int]Page{
 						0: {
-							Trigger: map[string]Trigger{
+							Trigger: map[Coordinate]Trigger{
 								"1,2": {
 									Actor: "test",
 									ColorSettings: &ColorSettings{

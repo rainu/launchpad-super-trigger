@@ -1,7 +1,6 @@
 package actor
 
 import (
-	"context"
 	"fmt"
 	"go.uber.org/zap"
 	"io"
@@ -16,7 +15,7 @@ type RestActionHandler struct {
 	Body       func() io.Reader
 }
 
-func (r *RestActionHandler) Do(ctx context.Context) error {
+func (r *RestActionHandler) Do(ctx Context) error {
 	var body io.Reader
 	if r.Body != nil {
 		body = r.Body()
@@ -33,7 +32,7 @@ func (r *RestActionHandler) Do(ctx context.Context) error {
 			}
 		}
 	}
-	req = req.WithContext(ctx)
+	req = req.WithContext(ctx.Context)
 
 	resp, err := r.HttpClient.Do(req)
 	if err != nil {

@@ -1,21 +1,20 @@
 package actor
 
 import (
-	"context"
 	"errors"
 	"strings"
 	"sync"
 )
 
-type SequentialActor struct {
+type Sequential struct {
 	delegates []Actor
 }
 
-func (s *SequentialActor) AddActor(actor Actor) {
+func (s *Sequential) AddActor(actor Actor) {
 	s.delegates = append(s.delegates, actor)
 }
 
-func (s *SequentialActor) Do(ctx context.Context) error {
+func (s *Sequential) Do(ctx Context) error {
 	for _, delegate := range s.delegates {
 		if err := delegate.Do(ctx); err != nil {
 			return err
@@ -25,15 +24,15 @@ func (s *SequentialActor) Do(ctx context.Context) error {
 	return nil
 }
 
-type ParallelActor struct {
+type Parallel struct {
 	delegates []Actor
 }
 
-func (p *ParallelActor) AddActor(actor Actor) {
+func (p *Parallel) AddActor(actor Actor) {
 	p.delegates = append(p.delegates, actor)
 }
 
-func (p *ParallelActor) Do(ctx context.Context) error {
+func (p *Parallel) Do(ctx Context) error {
 	wg := sync.WaitGroup{}
 	errChan := make(chan error, len(p.delegates))
 
