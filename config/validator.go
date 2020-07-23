@@ -16,6 +16,15 @@ func validate(cfg *Config) error {
 	if err != nil {
 		panic(err)
 	}
+	err = configValidator.RegisterValidation("coords", func(fl validator.FieldLevel) bool {
+		sVal := fl.Field().String()
+		_, err := Coordinates(sVal).Coordinates()
+
+		return err == nil
+	})
+	if err != nil {
+		panic(err)
+	}
 	err = configValidator.RegisterValidation("color", func(fl validator.FieldLevel) bool {
 		sVal := fl.Field().String()
 		_, err := Color(sVal).Color()

@@ -43,16 +43,17 @@ func (p *pageHandler) Init(actors map[string]actor.Actor) {
 	p.colorSettings = map[coord]ColorSettings{}
 	p.activeProcess = map[coord]context.CancelFunc{}
 
-	for coord, trigger := range p.page.Trigger {
-		c := convertCoordinate(coord)
+	for triggerCoords, trigger := range p.page.Trigger {
+		coordinates := convertCoordinates(triggerCoords)
+		for _, c := range coordinates {
+			if trigger.ColorSettings != nil {
+				p.colorSettings[c] = convertColorSettings(trigger.ColorSettings)
+			} else {
+				p.colorSettings[c] = defaultColorSettings
+			}
 
-		if trigger.ColorSettings != nil {
-			p.colorSettings[c] = convertColorSettings(trigger.ColorSettings)
-		} else {
-			p.colorSettings[c] = defaultColorSettings
+			p.delegates[c] = actors[trigger.Actor]
 		}
-
-		p.delegates[c] = actors[trigger.Actor]
 	}
 }
 
@@ -133,6 +134,20 @@ func convertCoordinate(coordinate config.Coordinate) coord {
 	}
 
 	return coord{x, y}
+}
+
+func convertCoordinates(coordinates config.Coordinates) []coord {
+	cfgCoords, err := coordinates.Coordinates()
+	if err != nil {
+		panic(err)
+	}
+
+	result := make([]coord, 0, len(cfgCoords))
+	for _, c := range cfgCoords {
+		result = append(result, coord{c[0], c[1]})
+	}
+
+	return result
 }
 
 func convertColorSettings(settings *config.ColorSettings) ColorSettings {

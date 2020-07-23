@@ -189,7 +189,7 @@ layout:
 				Layout: Layout{
 					Pages: map[int]Page{
 						0: {
-							Trigger: map[Coordinate]Trigger{
+							Trigger: map[Coordinates]Trigger{
 								"1,2": {
 									Actor: "test",
 									ColorSettings: &ColorSettings{

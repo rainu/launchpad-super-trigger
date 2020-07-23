@@ -56,17 +56,23 @@ layout:
 | layout.pages | - | false | Contains all page settings. |
 | layout.pages[*pageNumber*] | - | false | Contains a page setting. |
 | layout.pages[*pageNumber*].trigger | - | false | Contains settings about the trigger on this page. |
-| layout.pages[*pageNumber*].trigger[*coordinate*] | - | false | Contains settings about the trigger which should be called if the given button at *coordinate* is hit. |
-| layout.pages[*pageNumber*].trigger[*coordinate*].actor | - | **true** | The name of the actor (see actor config) which should be called if the trigger is hit. |
-| layout.pages[*pageNumber*].trigger[*coordinate*].color | - | false | Contains the *color* settings about the trigger. |
-| layout.pages[*pageNumber*].trigger[*coordinate*].color.ready | - | false | The color which should be used if the trigger is ready. |
-| layout.pages[*pageNumber*].trigger[*coordinate*].color.progress | - | false | The color which should be used as long as the actor is in progress. |
-| layout.pages[*pageNumber*].trigger[*coordinate*].color.success | - | false | The color which should be used if the actor work was done successfully. |
-| layout.pages[*pageNumber*].trigger[*coordinate*].color.failed | - | false | The color which should be used if the actor work was done wrong. |
+| layout.pages[*pageNumber*].trigger[*coordinates*] | - | false | Contains settings about the trigger which should be called if the given button at *coordinate* is hit. |
+| layout.pages[*pageNumber*].trigger[*coordinates*].actor | - | **true** | The name of the actor (see actor config) which should be called if the trigger is hit. |
+| layout.pages[*pageNumber*].trigger[*coordinates*].color | - | false | Contains the *color* settings about the trigger. |
+| layout.pages[*pageNumber*].trigger[*coordinates*].color.ready | - | false | The color which should be used if the trigger is ready. |
+| layout.pages[*pageNumber*].trigger[*coordinates*].color.progress | - | false | The color which should be used as long as the actor is in progress. |
+| layout.pages[*pageNumber*].trigger[*coordinates*].color.success | - | false | The color which should be used if the actor work was done successfully. |
+| layout.pages[*pageNumber*].trigger[*coordinates*].color.failed | - | false | The color which should be used if the actor work was done wrong. |
 
 * *pageNumber*
     * The page number must be a number from **0** until **255**.
 * *coordinate*
     * "X,Y" -> X and Y must have a value of 0-7.
+* *coordinates* (plural)
+    * represents a list of coordiantes
+        * "X,Y" -> single coordinate
+        * "0-7,Y" -> all X from 0 until 7 and given Y
+        * "X,0-7" -> all Y from 0 until 7 and given X
+        * "0-7,0-7" -> all X from 0 until 7 and all Y from 0 until 7
 * *color*
     * "r,g" -> **r** is the red value of the color and must be between 0 and 3. **g** is the green value of the color and must be between 0 and 3.

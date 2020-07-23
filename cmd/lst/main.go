@@ -45,7 +45,7 @@ layout:
 			trigger:
 				"0,0":
 					actor: c-test
-				"1,0":
+				"0-7,7":
 					actor: blink_0
 					color:
 						ready: 0,0

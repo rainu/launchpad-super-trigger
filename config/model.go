@@ -46,7 +46,7 @@ type Layout struct {
 }
 
 type Page struct {
-	Trigger map[Coordinate]Trigger `yaml:"trigger" validate:"dive,keys,coord,endkeys,required"`
+	Trigger map[Coordinates]Trigger `yaml:"trigger" validate:"dive,keys,coords,endkeys,required"`
 }
 
 type Trigger struct {
