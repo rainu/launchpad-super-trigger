@@ -27,6 +27,10 @@ func validate(cfg *Config) error {
 	}
 	err = configValidator.RegisterValidation("color", func(fl validator.FieldLevel) bool {
 		sVal := fl.Field().String()
+		if sVal == "" {
+			return true
+		}
+
 		_, err := Color(sVal).Color()
 
 		return err == nil

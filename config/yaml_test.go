@@ -161,6 +161,40 @@ actors:
 			},
 		},
 		{
+			`simple gfx wave`,
+			`
+actors:
+	gfxWave:
+		wv:
+			square: true
+			color: 1,1
+			delay: 50ms`,
+			Config{
+				Actors: Actors{
+					GfxWave: map[string]GfxWaveActor{
+						"wv": {
+							Square: true,
+							Color:  "1,1",
+							Delay:  50 * time.Millisecond,
+						},
+					},
+				},
+			},
+			[]string{},
+		},
+		{
+			`validate gfx blink`,
+			`
+actors:
+	gfxWave:
+		wv:
+			color: 1,`,
+			Config{},
+			[]string{
+				`Key: 'Config.Actors.GfxWave[wv].Color'`,
+			},
+		},
+		{
 			`simple layout`,
 			`
 actors:

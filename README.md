@@ -52,6 +52,10 @@ layout:
 | actors.gfxBlink[*name*].off | 0,0 | false | The off *color*. |
 | actors.gfxBlink[*name*].interval | 1s | false | The interval of blink animation. |
 | actors.gfxBlink[*name*].duration | until page leave | false | The duration of the blink interval. |
+| actors.gfxWave | - | false | Contains all available gfx wave actors. A wave actor will draw waves on the pads. |
+| actors.gfxWave[*name*].square | false | false | Should the waveform be square? |
+| actors.gfxWave[*name*].color | 0,3 | false | The color of the wave. |
+| actors.gfxWave[*name*].delay | 500ms | false | The delay between wave steps. |
 | layout | - | false | Contains all layout settings. |
 | layout.pages | - | false | Contains all page settings. |
 | layout.pages[*pageNumber*] | - | false | Contains a page setting. |

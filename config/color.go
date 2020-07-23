@@ -10,10 +10,6 @@ import (
 type Color string
 
 func (c Color) Color() (pad.Color, error) {
-	if c == "" {
-		return pad.ColorOff, nil
-	}
-
 	split := strings.Split(string(c), ",")
 	if len(split) != 2 {
 		return pad.Color{}, errors.New("syntax error")

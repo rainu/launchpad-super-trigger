@@ -15,6 +15,7 @@ type Actors struct {
 	Combined map[string]CombinedActor `yaml:"combined,omitempty" validate:"dive"`
 
 	GfxBlink map[string]GfxBlinkActor `yaml:"gfxBlink,omitempty" validate:"dive"`
+	GfxWave  map[string]GfxWaveActor  `yaml:"gfxWave,omitempty" validate:"dive"`
 }
 
 type RestActor struct {
@@ -36,6 +37,12 @@ type GfxBlinkActor struct {
 	ColorOff Color         `yaml:"off" validate:"color"`
 	Interval time.Duration `yaml:"interval"`
 	Duration time.Duration `yaml:"duration"`
+}
+
+type GfxWaveActor struct {
+	Square bool          `yaml:"square"`
+	Color  Color         `yaml:"color" validate:"color"`
+	Delay  time.Duration `yaml:"delay"`
 }
 
 type Listeners struct {

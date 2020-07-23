@@ -39,6 +39,9 @@ actors:
 			off: 3,3
 			interval: 500ms
 			duration: 10s
+	gfxWave:
+		circleWave:
+			delay: 50ms
 layout:
 	pages:
 		0:
@@ -46,7 +49,7 @@ layout:
 				"0,0":
 					actor: c-test
 				"0-7,7":
-					actor: blink_0
+					actor: circleWave
 					color:
 						ready: 0,0
 						success: 0,0`

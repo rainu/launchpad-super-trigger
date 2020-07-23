@@ -162,7 +162,7 @@ func convertColorSettings(settings *config.ColorSettings) ColorSettings {
 func convertColor(color config.Color) pad.Color {
 	c, err := color.Color()
 	if err != nil {
-		panic(err)
+		return pad.ColorOff
 	}
 	return c
 }
