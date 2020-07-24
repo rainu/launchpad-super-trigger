@@ -4,6 +4,8 @@ import "sync"
 
 type Lighter interface {
 	Light(x, y, g, r int) error
+	Text(g int, r int) ScrollingTextBuilder
+	TextLoop(g int, r int) ScrollingTextBuilder
 	Clear() error
 }
 
@@ -23,6 +25,14 @@ func (t *triggerAreaLighter) Light(x, y, g, r int) error {
 	return nil
 }
 
+func (t *triggerAreaLighter) Text(g int, r int) ScrollingTextBuilder {
+	return t.delegate.Text(g, r)
+}
+
+func (t *triggerAreaLighter) TextLoop(g int, r int) ScrollingTextBuilder {
+	return t.delegate.TextLoop(g, r)
+}
+
 func (t *triggerAreaLighter) Clear() error {
 	//clear the whole pad ...
 	if err := t.delegate.Clear(); err != nil {
@@ -38,6 +48,11 @@ type threadSafeLighter struct {
 	delegate Lighter
 }
 
+type threadSafeTextBuilder struct {
+	mux      *sync.Mutex
+	delegate ScrollingTextBuilder
+}
+
 func (t *threadSafeLighter) Light(x, y, g, r int) error {
 	t.mux.Lock()
 	defer t.mux.Unlock()
@@ -45,9 +60,34 @@ func (t *threadSafeLighter) Light(x, y, g, r int) error {
 	return t.delegate.Light(x, y, g, r)
 }
 
+func (t *threadSafeLighter) Text(g int, r int) ScrollingTextBuilder {
+	return &threadSafeTextBuilder{
+		mux:      &t.mux,
+		delegate: t.delegate.Text(g, r),
+	}
+}
+
+func (t *threadSafeLighter) TextLoop(g int, r int) ScrollingTextBuilder {
+	return &threadSafeTextBuilder{
+		mux:      &t.mux,
+		delegate: t.delegate.TextLoop(g, r),
+	}
+}
+
 func (t *threadSafeLighter) Clear() error {
 	t.mux.Lock()
 	defer t.mux.Unlock()
 
 	return t.delegate.Clear()
+}
+
+func (t *threadSafeTextBuilder) Add(speed byte, text string) ScrollingTextBuilder {
+	return t.delegate.Add(speed, text)
+}
+
+func (t *threadSafeTextBuilder) Perform() error {
+	t.mux.Lock()
+	defer t.mux.Unlock()
+
+	return t.delegate.Perform()
 }

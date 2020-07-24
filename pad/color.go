@@ -51,6 +51,14 @@ func (c Color) Light(pad Lighter, x, y int) error {
 	return pad.Light(x, y, c.Green, c.Red)
 }
 
+func (c Color) Text(pad Lighter) ScrollingTextBuilder {
+	return pad.Text(c.Green, c.Red)
+}
+
+func (c Color) TextLoop(pad Lighter) ScrollingTextBuilder {
+	return pad.TextLoop(c.Green, c.Red)
+}
+
 func (c Color) Ordinal() byte {
 	return byte(4*c.Red + c.Green)
 }

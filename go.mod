@@ -8,6 +8,7 @@ require (
 	github.com/leodido/go-urn v1.2.0 // indirect
 	github.com/niemeyer/pretty v0.0.0-20200227124842-a10e7caefd8e // indirect
 	github.com/rakyll/launchpad v0.0.0-20200512213241-400be720e7b7
+	github.com/rakyll/portmidi v0.0.0-20191102002215-74e95e8bc9b1
 	github.com/stretchr/testify v1.4.0
 	go.uber.org/zap v1.15.0
 	gopkg.in/check.v1 v1.0.0-20200227125254-8fa46927fb4f // indirect

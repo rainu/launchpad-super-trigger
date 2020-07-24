@@ -28,13 +28,17 @@ import "github.com/rakyll/launchpad"
 */
 
 func IsPageHit(hit launchpad.Hit) bool {
-	return hit.Y == 8
+	return hit.Y == 8 && hit.X >= 0 && hit.X <= 7
 }
 
 func IsSpecialHit(hit launchpad.Hit) bool {
-	return hit.X == 8
+	return hit.X == 8 && hit.Y >= 0 && hit.Y <= 7
 }
 
 func IsPadHit(hit launchpad.Hit) bool {
-	return !IsPageHit(hit) && !IsSpecialHit(hit)
+	return hit.X >= 0 && hit.X <= 7 && hit.Y >= 0 && hit.Y <= 7
+}
+
+func IsMetaTextMarker(hit launchpad.Hit) bool {
+	return hit.X == -104 && hit.Y == 8
 }

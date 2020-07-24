@@ -13,7 +13,7 @@ import (
 type TriggerHandleFunc func(lighter Lighter, page PageNumber, x int, y int) error
 
 type LaunchpadSuperTrigger struct {
-	pad         *launchpad.Launchpad
+	pad         ExtendedLaunchpad
 	lighter     Lighter
 	currentPage *Page
 	handle      TriggerHandleFunc
@@ -24,16 +24,17 @@ func NewLaunchpadSuperTrigger(handler TriggerHandleFunc) (*LaunchpadSuperTrigger
 	if err != nil {
 		return nil, err
 	}
+	extendedPad := newExtendedLaunchpad(pad)
 
 	page := NewPage(0)
 
 	return &LaunchpadSuperTrigger{
-		pad: pad,
+		pad: extendedPad,
 		lighter: &triggerAreaLighter{
 			page: page,
 			delegate: &threadSafeLighter{
 				mux:      sync.Mutex{},
-				delegate: pad,
+				delegate: extendedPad,
 			},
 		},
 		currentPage: page,
@@ -67,6 +68,10 @@ func (l *LaunchpadSuperTrigger) Run(ctx context.Context) {
 				if err := l.handle(l.lighter, l.currentPage.Number(), hit.X, hit.Y); err != nil {
 					zap.L().Error("Error while handling hit!", zap.Error(err))
 				}
+			} else if IsMetaTextMarker(hit) {
+				zap.L().Debug("Received a text end marker!")
+			} else {
+				continue
 			}
 
 			//light the page buttons AFTER the handler, so handlers could use "lighter.Clear()" without
