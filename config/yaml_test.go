@@ -286,6 +286,40 @@ actors:
 			},
 		},
 		{
+			`simple command`,
+			`
+actors:
+	command:
+		cmd:
+			name: /bin/test.sh
+			args: 
+				- -h
+			appendContext: true`,
+			Config{
+				Actors: Actors{
+					Command: map[string]CommandActor{
+						"cmd": {
+							Name:          "/bin/test.sh",
+							Arguments:     []string{"-h"},
+							AppendContext: true,
+						},
+					},
+				},
+			},
+			[]string{},
+		},
+		{
+			`validate command`,
+			`
+actors:
+	command:
+		cmd:`,
+			Config{},
+			[]string{
+				`Key: 'Config.Actors.Command[cmd].Name'`,
+			},
+		},
+		{
 			`simple layout`,
 			`
 actors:

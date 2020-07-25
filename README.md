@@ -12,6 +12,12 @@ $ brew install portmidi
 $ yay -S portmidi
 ```
 
+# Get the Binary
+You can build it on your own (you will need [golang](https://golang.org/) installed):
+```bash
+go build -a -installsuffix cgo ./cmd/lst/
+```
+
 # ConfigFile
 
 ```yaml
@@ -49,6 +55,10 @@ layout:
 | config key | default | mandatory | description |
 |---|---|---|---|
 | actors | - | false | Contains all available actors. |
+| actors.command | - | false | Contains all available command actors. A command actor will runs a command on the local machine. |
+| actors.command[*name*].name | - | **true** | The name/path of the command to execute. |
+| actors.command[*name*].args | - | false | A list of arguments which will be send to the command. |
+| actors.command[*name*].appendContext | false | false | Should the trigger context append in the command args? |
 | actors.rest | - | false | Contains all available rest actors. An rest actor will call an rest service. |
 | actors.rest[*name*].method | GET | false | The http method which should be used. |
 | actors.rest[*name*].url | - | **true** | The target url. |

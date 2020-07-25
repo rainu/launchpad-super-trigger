@@ -6,7 +6,7 @@ import (
 	"io"
 )
 
-type MqttActionHandler struct {
+type Mqtt struct {
 	Client   mqtt.Client
 	Topic    string
 	QOS      byte
@@ -14,7 +14,7 @@ type MqttActionHandler struct {
 	Body     func() io.Reader
 }
 
-func (m *MqttActionHandler) Do(ctx Context) error {
+func (m *Mqtt) Do(ctx Context) error {
 	byteBuff := bytes.NewBuffer(make([]byte, 0, 8192))
 	_, err := byteBuff.ReadFrom(m.Body())
 	if err != nil {

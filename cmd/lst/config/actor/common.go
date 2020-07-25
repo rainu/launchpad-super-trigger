@@ -11,6 +11,7 @@ func BuildActors(parsedConfig *config.Config, mqttConnections map[string]MQTT.Cl
 
 	buildRest(handler, parsedConfig.Actors.Rest)
 	buildMqtt(handler, parsedConfig.Actors.Mqtt, mqttConnections)
+	buildCommand(handler, parsedConfig.Actors.Command)
 	buildCombined(handler, parsedConfig.Actors.Combined)
 	buildGfxBlink(handler, parsedConfig.Actors.GfxBlink)
 	buildGfxWave(handler, parsedConfig.Actors.GfxWave)

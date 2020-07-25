@@ -7,7 +7,7 @@ import (
 	"net/http"
 )
 
-type RestActionHandler struct {
+type Rest struct {
 	HttpClient *http.Client
 	Method     string
 	Url        string
@@ -15,7 +15,7 @@ type RestActionHandler struct {
 	Body       func() io.Reader
 }
 
-func (r *RestActionHandler) Do(ctx Context) error {
+func (r *Rest) Do(ctx Context) error {
 	var body io.Reader
 	if r.Body != nil {
 		body = r.Body()

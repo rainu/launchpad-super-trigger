@@ -12,7 +12,7 @@ import (
 
 func buildRest(actors map[string]actor.Actor, restActors map[string]config.RestActor) {
 	for actorName, restActor := range restActors {
-		handler := &actor.RestActionHandler{
+		handler := &actor.Rest{
 			HttpClient: http.DefaultClient,
 			Method:     restActor.Method,
 			Url:        restActor.URL,

@@ -25,6 +25,7 @@ type MQTTConnection struct {
 type Actors struct {
 	Rest     map[string]RestActor     `yaml:"rest,omitempty" validate:"dive"`
 	Mqtt     map[string]MQTTActor     `yaml:"mqtt,omitempty" validate:"dive"`
+	Command  map[string]CommandActor  `yaml:"command,omitempty" validate:"dive"`
 	Combined map[string]CombinedActor `yaml:"combined,omitempty" validate:"dive"`
 
 	GfxBlink map[string]GfxBlinkActor `yaml:"gfxBlink,omitempty" validate:"dive"`
@@ -48,6 +49,12 @@ type MQTTActor struct {
 	BodyB64    string `yaml:"bodyBase64" validate:"omitempty,base64"`
 	BodyPath   string `yaml:"bodyPath" validate:"omitempty,file"`
 	BodyRaw    string `yaml:"body"`
+}
+
+type CommandActor struct {
+	Name          string   `yaml:"name" validate:"required"`
+	Arguments     []string `yaml:"args"`
+	AppendContext bool     `yaml:"appendContext"`
 }
 
 type CombinedActor struct {
