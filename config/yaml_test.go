@@ -59,6 +59,97 @@ actors:
 			},
 		},
 		{
+			`simple connection`,
+			`
+connections:
+	mqtt:
+		b1:
+			broker: tcp://mqtt-broker:1883
+			clientId: client
+			username: user
+			password: password`,
+			Config{
+				Connections: Connections{
+					MQTT: map[string]MQTTConnection{
+						"b1": {
+							Broker:   "tcp://mqtt-broker:1883",
+							ClientId: "client",
+							Username: "user",
+							Password: "password",
+						},
+					},
+				},
+			},
+			[]string{},
+		},
+		{
+			`validation connection`,
+			`
+connections:
+	mqtt:
+		b1:
+			broker: abc`,
+			Config{},
+			[]string{
+				`Key: 'Config.Connections.MQTT[b1].Broker'`,
+			},
+		},
+		{
+			`simple mqtt`,
+			`
+connections:
+	mqtt:
+		b1:
+			broker: tcp://mqtt-broker:1883
+actors:
+	mqtt:
+		test:
+			connection: b1
+			topic: test/topic
+			qos: 1
+			retained: true
+			body: "Hello World"`,
+			Config{
+				Connections: Connections{
+					MQTT: map[string]MQTTConnection{
+						"b1": {
+							Broker: "tcp://mqtt-broker:1883",
+						},
+					},
+				},
+				Actors: Actors{
+					Mqtt: map[string]MQTTActor{
+						"test": {
+							Connection: "b1",
+							Topic:      "test/topic",
+							QOS:        1,
+							Retained:   true,
+							BodyRaw:    `Hello World`,
+						},
+					},
+				},
+			},
+			[]string{},
+		},
+		{
+			`validation mqtt`,
+			`
+actors:
+	mqtt:
+		test:
+			connection: b1
+			qos: 4
+			bodyPath: invalidPath
+			bodyBase64: "^"`,
+			Config{},
+			[]string{
+				`Key: 'Config.Actors.Mqtt[test].Topic'`,
+				`Key: 'Config.Actors.Mqtt[test].QOS'`,
+				`Key: 'Config.Actors.Mqtt[test].BodyB64'`,
+				`Key: 'Config.Actors.Mqtt[test].BodyPath'`,
+			},
+		},
+		{
 			`simple combined`,
 			`
 actors:

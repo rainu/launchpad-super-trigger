@@ -15,21 +15,33 @@ $ yay -S portmidi
 # ConfigFile
 
 ```yaml
+connections:
+ mqtt:
+  test-broker:
+   broker: tcp://broker-host:1883
+   clientId: launchpad
 actors:
  rest:
-  test:
+  rest-test:
    url: "http://localhost:1312"
+ mqtt:
+  mqtt-test:
+   connection: test-broker
+   topic: my/topic
+   body: Hello!
 layout:
  pages:
   0:
    trigger:
-    "1,2":
-     actor: test
+    "0,1":
+     actor: rest-test
      color:
       ready: 0,0
       progress: 1,1
       success: 2,2
       failed: 3,3
+    "1,0":
+     actor: mqtt-test
 ```
 
 ## Config documentation
@@ -44,6 +56,14 @@ layout:
 | actors.rest[*name*].body | - | false | The body content for the http request. |
 | actors.rest[*name*].bodyBase64 | - | false | The body content for the http request encoded in base64. |
 | actors.rest[*name*].bodyPath | - | false | The body file for the http request. |
+| actors.mqtt | - | false | Contains all available mqtt actors. An mqtt actor will send a message to a given topic. |
+| actors.mqtt[*name*].connection | - | false | The name of to mqtt connection which should be used for this mqtt actor. |
+| actors.mqtt[*name*].topic | - | **true** | The topic name. |
+| actors.mqtt[*name*].qos | 0 | false | The QualityOfService for the published message. |
+| actors.mqtt[*name*].retained | false | false | Should the message be retained? |
+| actors.mqtt[*name*].body | - | false | The body content for the mqtt message. |
+| actors.mqtt[*name*].bodyBase64 | - | false | The body content for the mqtt message encoded in base64. |
+| actors.mqtt[*name*].bodyPath | - | false | The body file for the mqtt message. |
 | actors.combined | - | false | Contains all available combined actors. An combined actor will call other actors (sequential or in parallel). |
 | actors.combined[*name*].actors | - | **true** | The list of underlying actor names. Must be greater or equal than 2! |
 | actors.combined[*name*].parallel | false | false | How should the underlying actors be called. If true they will be called parallel. Otherwise the will be called sequential. |
@@ -56,6 +76,12 @@ layout:
 | actors.gfxWave[*name*].square | false | false | Should the waveform be square? |
 | actors.gfxWave[*name*].color | 0,3 | false | The color of the wave. |
 | actors.gfxWave[*name*].delay | 500ms | false | The delay between wave steps. |
+| connections | - | false | Contains all available connections, which can be used by different actors. |
+| connections.mqtt | - | false | Contains all available MQTT connections. |
+| connections.mqtt[*name*].broker | - | **true** | The url of the MQTT-Broker. |
+| connections.mqtt[*name*].clientId | - | false | The client id which is send to the mqtt broker. |
+| connections.mqtt[*name*].username | - | false | The username. |
+| connections.mqtt[*name*].password | - | false | The password. |
 | layout | - | false | Contains all layout settings. |
 | layout.pages | - | false | Contains all page settings. |
 | layout.pages[*pageNumber*] | - | false | Contains a page setting. |

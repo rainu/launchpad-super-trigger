@@ -5,13 +5,26 @@ import (
 )
 
 type Config struct {
-	Actors    Actors    `yaml:"actors"`
-	Listeners Listeners `yaml:"listeners"`
-	Layout    Layout    `yaml:"layout"`
+	Connections Connections `yaml:"connections"`
+	Actors      Actors      `yaml:"actors"`
+	Listeners   Listeners   `yaml:"listeners"`
+	Layout      Layout      `yaml:"layout"`
+}
+
+type Connections struct {
+	MQTT map[string]MQTTConnection `yaml:"mqtt" validate:"dive"`
+}
+
+type MQTTConnection struct {
+	Broker   string `yaml:"broker" validate:"required,url"`
+	ClientId string `yaml:"clientId"`
+	Username string `yaml:"username"`
+	Password string `yaml:"password"`
 }
 
 type Actors struct {
 	Rest     map[string]RestActor     `yaml:"rest,omitempty" validate:"dive"`
+	Mqtt     map[string]MQTTActor     `yaml:"mqtt,omitempty" validate:"dive"`
 	Combined map[string]CombinedActor `yaml:"combined,omitempty" validate:"dive"`
 
 	GfxBlink map[string]GfxBlinkActor `yaml:"gfxBlink,omitempty" validate:"dive"`
@@ -25,6 +38,16 @@ type RestActor struct {
 	BodyB64  string              `yaml:"bodyBase64" validate:"omitempty,base64"`
 	BodyPath string              `yaml:"bodyPath" validate:"omitempty,file"`
 	BodyRaw  string              `yaml:"body"`
+}
+
+type MQTTActor struct {
+	Connection string `yaml:"connection" validate:"required,connection_mqtt"`
+	Topic      string `yaml:"topic" validate:"required"`
+	QOS        byte   `yaml:"qos" validate:"gte=0,lte=2"`
+	Retained   bool   `yaml:"retained"`
+	BodyB64    string `yaml:"bodyBase64" validate:"omitempty,base64"`
+	BodyPath   string `yaml:"bodyPath" validate:"omitempty,file"`
+	BodyRaw    string `yaml:"body"`
 }
 
 type CombinedActor struct {

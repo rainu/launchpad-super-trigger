@@ -8,13 +8,14 @@ import (
 	"go.uber.org/zap"
 	"os"
 	"os/signal"
-	"strings"
 	"sync"
 	"syscall"
 	"time"
 )
 
 func main() {
+	LoadArgs()
+
 	//initialise our global logger
 	logger, _ := zap.NewDevelopment(
 		zap.AddStacktrace(zap.FatalLevel), //disable stacktrace for level lower than fatal
@@ -22,40 +23,12 @@ func main() {
 	zap.ReplaceGlobals(logger)
 	defer zap.L().Sync()
 
-	configContent := `
-actors:
-	rest:
-		test:
-			url: "http://localhost:1312"
-	combined:
-		c-test:
-			parallel: true
-			actors:
-				- test
-				- test
-	gfxBlink:
-		blink_0:
-			on: 1,1
-			off: 3,3
-			interval: 500ms
-			duration: 10s
-	gfxWave:
-		circleWave:
-			delay: 50ms
-layout:
-	pages:
-		0:
-			trigger:
-				"0,0":
-					actor: c-test
-				"0-7,7":
-					actor: circleWave
-					color:
-						ready: 0,0
-						success: 0,0`
-	configContent = strings.ReplaceAll(configContent, "\t", " ")
+	configFile, err := os.Open(*Args.ConfigFile)
+	if err != nil {
+		zap.L().Fatal("error while read configuration: %v", zap.Error(err))
+	}
 
-	dispatcher, err := config.ConfigureDispatcher(strings.NewReader(configContent))
+	dispatcher, err := config.ConfigureDispatcher(configFile)
 	if err != nil {
 		zap.L().Fatal("error while opening setup launchpad configuration: %v", zap.Error(err))
 	}

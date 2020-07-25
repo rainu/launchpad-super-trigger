@@ -60,6 +60,18 @@ func validate(cfg *Config) error {
 	if err != nil {
 		panic(err)
 	}
+	err = configValidator.RegisterValidation("connection_mqtt", func(fl validator.FieldLevel) bool {
+		connectionName := fl.Field().String()
+		knownConnections := cfg.Connections.MQTT
+
+		if _, found := knownConnections[connectionName]; found {
+			return true
+		}
+		return false
+	})
+	if err != nil {
+		panic(err)
+	}
 
 	return configValidator.Struct(cfg)
 }
