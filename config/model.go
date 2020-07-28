@@ -127,7 +127,7 @@ type Progressbar struct {
 	X           int          `yaml:"x"`
 	Y           int          `yaml:"y"`
 	Min         float64      `yaml:"min"`
-	Max         float64      `yaml:"max"`
+	Max         *float64     `yaml:"max"`
 	Vertical    bool         `yaml:"vertical"`
 	Quadrant    gfx.Quadrant `yaml:"quadrant"`
 	RightToLeft bool         `yaml:"rtl"`

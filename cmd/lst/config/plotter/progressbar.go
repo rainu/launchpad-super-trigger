@@ -14,11 +14,15 @@ func buildProgressbar(allPlotter map[plotter.Plotter]string, progressPlotter []c
 			Y:         progressbar.Y,
 			Quadrant:  progressbar.Quadrant,
 			Min:       progressbar.Min,
-			Max:       progressbar.Max,
 			Direction: gfx.AscDirection,
 			Vertical:  progressbar.Vertical,
 			Fill:      colorOrDefault(progressbar.Fill, pad.ColorHighGreen),
 			Empty:     colorOrDefault(progressbar.Empty, pad.ColorOff),
+		}
+		if progressbar.Max != nil {
+			pb.Max = *progressbar.Max
+		} else {
+			pb.Max = 100
 		}
 		if progressbar.RightToLeft {
 			pb.Direction = gfx.DescDirection

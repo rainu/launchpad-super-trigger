@@ -118,7 +118,7 @@ layout:
 | layout.pages[*pageNumber*].plotter.progressbar | - | false | Contains all progressbar plotter for this page. |
 | layout.pages[*pageNumber*].plotter.progressbar[].datapoint | - | **true** | The reference for the underlying data point. |
 | layout.pages[*pageNumber*].plotter.progressbar[].min | 0 | false | The minimum value of the progressbar. |
-| layout.pages[*pageNumber*].plotter.progressbar[].max | 0 | false | The maximum value of the progressbar. |
+| layout.pages[*pageNumber*].plotter.progressbar[].max | 100 | false | The maximum value of the progressbar. |
 | layout.pages[*pageNumber*].plotter.progressbar[].vertical | false | false | Is the progressbar a vertical one? |
 | layout.pages[*pageNumber*].plotter.progressbar[].quadrant | *whole pad* | false | In which mathematical quadrant should the progressbar be plotted. |
 | layout.pages[*pageNumber*].plotter.progressbar[].x | - | false | If the progressbar *is vertical*, where should the progressbar be plotted. |
