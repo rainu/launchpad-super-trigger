@@ -1,18 +1,19 @@
 package config
 
 import (
+	"github.com/rainu/launchpad-super-trigger/gfx"
 	"time"
 )
 
 type Config struct {
 	Connections Connections `yaml:"connections"`
 	Actors      Actors      `yaml:"actors"`
-	Listeners   Listeners   `yaml:"listeners"`
+	Sensors     Sensors     `yaml:"sensors"`
 	Layout      Layout      `yaml:"layout"`
 }
 
 type Connections struct {
-	MQTT map[string]MQTTConnection `yaml:"mqtt" validate:"dive"`
+	MQTT map[string]MQTTConnection `yaml:"mqtt" validate:"dive,keys,component_name,endkeys,required"`
 }
 
 type MQTTConnection struct {
@@ -23,13 +24,13 @@ type MQTTConnection struct {
 }
 
 type Actors struct {
-	Rest     map[string]RestActor     `yaml:"rest,omitempty" validate:"dive"`
-	Mqtt     map[string]MQTTActor     `yaml:"mqtt,omitempty" validate:"dive"`
-	Command  map[string]CommandActor  `yaml:"command,omitempty" validate:"dive"`
-	Combined map[string]CombinedActor `yaml:"combined,omitempty" validate:"dive"`
+	Rest     map[string]RestActor     `yaml:"rest,omitempty" validate:"dive,keys,component_name,endkeys,required"`
+	Mqtt     map[string]MQTTActor     `yaml:"mqtt,omitempty" validate:"dive,keys,component_name,endkeys,required"`
+	Command  map[string]CommandActor  `yaml:"command,omitempty" validate:"dive,keys,component_name,endkeys,required"`
+	Combined map[string]CombinedActor `yaml:"combined,omitempty" validate:"dive,keys,component_name,endkeys,required"`
 
-	GfxBlink map[string]GfxBlinkActor `yaml:"gfxBlink,omitempty" validate:"dive"`
-	GfxWave  map[string]GfxWaveActor  `yaml:"gfxWave,omitempty" validate:"dive"`
+	GfxBlink map[string]GfxBlinkActor `yaml:"gfxBlink,omitempty" validate:"dive,keys,component_name,endkeys,required"`
+	GfxWave  map[string]GfxWaveActor  `yaml:"gfxWave,omitempty" validate:"dive,keys,component_name,endkeys,required"`
 }
 
 type RestActor struct {
@@ -75,7 +76,25 @@ type GfxWaveActor struct {
 	Delay  time.Duration `yaml:"delay"`
 }
 
-type Listeners struct {
+type Sensors struct {
+	Mqtt map[string]MQTTSensor `yaml:"mqtt,omitempty" validate:"dive,keys,component_name,endkeys,required"`
+}
+
+type MQTTSensor struct {
+	Connection string     `yaml:"connection" validate:"required,connection_mqtt"`
+	Topic      string     `yaml:"topic" validate:"required"`
+	QOS        byte       `yaml:"qos" validate:"gte=0,lte=2"`
+	DataPoints DataPoints `yaml:"data"`
+}
+
+type DataPoints struct {
+	Gjson map[string]string         `yaml:"gjson" validate:"dive,keys,component_name,endkeys,required"`
+	Split map[string]SplitDataPoint `yaml:"split" validate:"dive,keys,component_name,endkeys,required"`
+}
+
+type SplitDataPoint struct {
+	Separator string `yaml:"separator" validate:"required"`
+	Index     int    `yaml:"index" validate:"gte=0"`
 }
 
 type Layout struct {
@@ -84,6 +103,7 @@ type Layout struct {
 
 type Page struct {
 	Trigger map[Coordinates]Trigger `yaml:"trigger" validate:"dive,keys,coords,endkeys,required"`
+	Plotter Plotters                `yaml:"plotter" validate:"dive"`
 }
 
 type Trigger struct {
@@ -96,4 +116,21 @@ type ColorSettings struct {
 	Progress Color `yaml:"progress" validate:"color"`
 	Success  Color `yaml:"success" validate:"color"`
 	Failed   Color `yaml:"failed" validate:"color"`
+}
+
+type Plotters struct {
+	Progressbar []Progressbar `yaml:"progressbar" validate:"dive"`
+}
+
+type Progressbar struct {
+	DataPoint   string       `yaml:"datapoint" validate:"required,datapoint"`
+	X           int          `yaml:"x"`
+	Y           int          `yaml:"y"`
+	Min         float64      `yaml:"min"`
+	Max         float64      `yaml:"max"`
+	Vertical    bool         `yaml:"vertical"`
+	Quadrant    gfx.Quadrant `yaml:"quadrant"`
+	RightToLeft bool         `yaml:"rtl"`
+	Fill        Color        `yaml:"fill" validate:"color"`
+	Empty       Color        `yaml:"empty" validate:"color"`
 }

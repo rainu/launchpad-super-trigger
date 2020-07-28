@@ -42,10 +42,10 @@ const (
 type Quadrant int
 
 const (
-	FirstQuadrant  Quadrant = 0
-	SecondQuadrant Quadrant = 1
-	ThirdQuadrant  Quadrant = 2
-	ForthQuadrant  Quadrant = 3
+	FirstQuadrant  Quadrant = 1
+	SecondQuadrant Quadrant = 2
+	ThirdQuadrant  Quadrant = 3
+	ForthQuadrant  Quadrant = 4
 )
 
 type Direction bool

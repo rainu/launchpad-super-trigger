@@ -47,15 +47,16 @@ actors:
 			`
 actors:
 	rest:
-		test:
+		test.1:
 			url: nonValidUrl
 			bodyPath: invalidPath
 			bodyBase64: "^"`,
 			Config{},
 			[]string{
-				`Key: 'Config.Actors.Rest[test].URL'`,
-				`Key: 'Config.Actors.Rest[test].BodyPath'`,
-				`Key: 'Config.Actors.Rest[test].BodyB64'`,
+				`Key: 'Config.Actors.Rest[test.1]'`,
+				`Key: 'Config.Actors.Rest[test.1].URL'`,
+				`Key: 'Config.Actors.Rest[test.1].BodyPath'`,
+				`Key: 'Config.Actors.Rest[test.1].BodyB64'`,
 			},
 		},
 		{
@@ -87,11 +88,12 @@ connections:
 			`
 connections:
 	mqtt:
-		b1:
+		b.1:
 			broker: abc`,
 			Config{},
 			[]string{
-				`Key: 'Config.Connections.MQTT[b1].Broker'`,
+				`Key: 'Config.Connections.MQTT[b.1]'`,
+				`Key: 'Config.Connections.MQTT[b.1].Broker'`,
 			},
 		},
 		{
@@ -136,17 +138,18 @@ actors:
 			`
 actors:
 	mqtt:
-		test:
+		test.1:
 			connection: b1
 			qos: 4
 			bodyPath: invalidPath
 			bodyBase64: "^"`,
 			Config{},
 			[]string{
-				`Key: 'Config.Actors.Mqtt[test].Topic'`,
-				`Key: 'Config.Actors.Mqtt[test].QOS'`,
-				`Key: 'Config.Actors.Mqtt[test].BodyB64'`,
-				`Key: 'Config.Actors.Mqtt[test].BodyPath'`,
+				`Key: 'Config.Actors.Mqtt[test.1]'`,
+				`Key: 'Config.Actors.Mqtt[test.1].Topic'`,
+				`Key: 'Config.Actors.Mqtt[test.1].QOS'`,
+				`Key: 'Config.Actors.Mqtt[test.1].BodyB64'`,
+				`Key: 'Config.Actors.Mqtt[test.1].BodyPath'`,
 			},
 		},
 		{
@@ -186,7 +189,7 @@ actors:
 		test:
 			url: "http://localhost:1312"
 	combined:
-		c-test:
+		c-test.1:
 			actors:
 				- test
 				- doesNotExists
@@ -209,7 +212,8 @@ actors:
 				},
 			},
 			[]string{
-				`Key: 'Config.Actors.Combined[c-test].Actor[1]'`,
+				`Key: 'Config.Actors.Combined[c-test.1]'`,
+				`Key: 'Config.Actors.Combined[c-test.1].Actor[1]'`,
 				`Key: 'Config.Actors.Combined[c-test2].Actor'`,
 			},
 		},
@@ -242,13 +246,14 @@ actors:
 			`
 actors:
 	gfxBlink:
-		bl:
+		b.l:
 			on: 1,
 			off: 3,9`,
 			Config{},
 			[]string{
-				`Key: 'Config.Actors.GfxBlink[bl].ColorOn'`,
-				`Key: 'Config.Actors.GfxBlink[bl].ColorOff'`,
+				`Key: 'Config.Actors.GfxBlink[b.l]'`,
+				`Key: 'Config.Actors.GfxBlink[b.l].ColorOn'`,
+				`Key: 'Config.Actors.GfxBlink[b.l].ColorOff'`,
 			},
 		},
 		{
@@ -278,11 +283,12 @@ actors:
 			`
 actors:
 	gfxWave:
-		wv:
+		wv.1:
 			color: 1,`,
 			Config{},
 			[]string{
-				`Key: 'Config.Actors.GfxWave[wv].Color'`,
+				`Key: 'Config.Actors.GfxWave[wv.1]'`,
+				`Key: 'Config.Actors.GfxWave[wv.1].Color'`,
 			},
 		},
 		{
@@ -313,19 +319,32 @@ actors:
 			`
 actors:
 	command:
-		cmd:`,
+		cmd.1:`,
 			Config{},
 			[]string{
-				`Key: 'Config.Actors.Command[cmd].Name'`,
+				`Key: 'Config.Actors.Command[cmd.1]'`,
+				`Key: 'Config.Actors.Command[cmd.1].Name'`,
 			},
 		},
 		{
 			`simple layout`,
 			`
+connections:
+	mqtt:
+		b1:
+			broker: tcp://broker:1883
 actors:
 	rest:
 		test:
 			url: "http://localhost:1312"
+sensors:
+	mqtt:
+		test:
+			connection: b1
+			topic: test
+			data:
+				gjson:
+					test: test
 layout:
 	pages:
 		0:
@@ -336,12 +355,35 @@ layout:
 						ready: 0,0
 						progress: 1,1
 						success: 2,2
-						failed: 3,3`,
+						failed: 3,3
+			plotter:
+				progressbar:
+					- datapoint: test.test`,
 			Config{
+				Connections: Connections{
+					MQTT: map[string]MQTTConnection{
+						"b1": {
+							Broker: "tcp://broker:1883",
+						},
+					},
+				},
 				Actors: Actors{
 					Rest: map[string]RestActor{
 						"test": {
 							URL: "http://localhost:1312",
+						},
+					},
+				},
+				Sensors: Sensors{
+					Mqtt: map[string]MQTTSensor{
+						"test": {
+							Connection: "b1",
+							Topic:      "test",
+							DataPoints: DataPoints{
+								Gjson: map[string]string{
+									"test": "test",
+								},
+							},
 						},
 					},
 				},
@@ -358,6 +400,11 @@ layout:
 										Failed:   "3,3",
 									},
 								},
+							},
+							Plotter: Plotters{
+								Progressbar: []Progressbar{{
+									DataPoint: "test.test",
+								}},
 							},
 						},
 					},
@@ -377,7 +424,10 @@ layout:
 						ready: 0
 						progress: 1,4
 						success: 4,1
-						failed: -1,3`,
+						failed: -1,3
+			plotter:
+				progressbar:
+					- datapoint: no.data`,
 			Config{},
 			[]string{
 				`Key: 'Config.Layout.Pages[999]'`,
@@ -387,6 +437,48 @@ layout:
 				`Key: 'Config.Layout.Pages[999].Trigger[-1,2].ColorSettings.Progress'`,
 				`Key: 'Config.Layout.Pages[999].Trigger[-1,2].ColorSettings.Success'`,
 				`Key: 'Config.Layout.Pages[999].Trigger[-1,2].ColorSettings.Failed'`,
+				`Key: 'Config.Layout.Pages[999].Plotter.Progressbar[0].DataPoint'`,
+			},
+		},
+		{
+			`actor name uniqueness`,
+			`
+actors:
+	rest:
+		test:
+			url: "http://localhost:1312"
+	combined:
+		test:
+			actors:
+				- test
+				- test`,
+			Config{},
+			[]string{
+				`actor 'test' already known`,
+			},
+		},
+		{
+			`sensor data point uniqueness`,
+			`
+connections:
+	mqtt:
+		b1:
+			broker: tcp://broker:1883
+sensors:
+	mqtt:
+		notebook:
+			connection: b1
+			topic: test
+			data:
+				gjson:
+					test: test
+				split:
+					test:
+						separator: ","
+						index: 0`,
+			Config{},
+			[]string{
+				`sensor data point 'test' already known`,
 			},
 		},
 	}

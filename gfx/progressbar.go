@@ -41,8 +41,8 @@ func (e Renderer) horizontalQuadrantProgressbar(y, xFrom, xUntil, percent int, d
 	return e.Fill(x0, y, x1, y, fill)
 }
 
-func (e Renderer) VerticalProgressbar(y, percent int, dir Direction, fill, empty pad.Color) error {
-	return e.verticalQuadrantProgressbar(y, padHeight, minY, percent, dir, fill, empty)
+func (e Renderer) VerticalProgressbar(x, percent int, dir Direction, fill, empty pad.Color) error {
+	return e.verticalQuadrantProgressbar(x, padHeight, minY, percent, dir, fill, empty)
 }
 
 func (e Renderer) VerticalQuadrantProgressbar(q Quadrant, x, percent int, dir Direction, fill, empty pad.Color) error {

@@ -92,6 +92,17 @@ layout:
 | connections.mqtt[*name*].clientId | - | false | The client id which is send to the mqtt broker. |
 | connections.mqtt[*name*].username | - | false | The username. |
 | connections.mqtt[*name*].password | - | false | The password. |
+| sensors | - | false | Contains all available sensors. A sensor will listen for (incoming) data. |
+| sensors.mqtt | - | false | Contains all available mqtt sensors. A mqtt sensor will listen for mqtt topics. |
+| sensors.mqtt[*name*].connection | - | **true** | The name of to mqtt connection which should be used for this mqtt sensor. |
+| sensors.mqtt[*name*].topic | - | **true** | The topic name. |
+| sensors.mqtt[*name*].qos | 0 | false | The QualityOfService for the subscription message. |
+| sensors.mqtt[*name*].data | - | false | Contains all data points. A data point is a part of the received message. |
+| sensors.mqtt[*name*].data.gjson | - | false | Contains all [gjson](https://github.com/tidwall/gjson) data points. |
+| sensors.mqtt[*name*].data.gjson[*name*] | - | false | The gjson path to use to extract data point. |
+| sensors.mqtt[*name*].data.split | - | false | Contains all split data points. |
+| sensors.mqtt[*name*].data.split[*name*].separator | - | true | The separator which should be used to split the whole data. |
+| sensors.mqtt[*name*].data.split[*name*].index | - | true | The index of the split element which should be used as data point. Must be greater or equal 0! |
 | layout | - | false | Contains all layout settings. |
 | layout.pages | - | false | Contains all page settings. |
 | layout.pages[*pageNumber*] | - | false | Contains a page setting. |
@@ -103,6 +114,18 @@ layout:
 | layout.pages[*pageNumber*].trigger[*coordinates*].color.progress | - | false | The color which should be used as long as the actor is in progress. |
 | layout.pages[*pageNumber*].trigger[*coordinates*].color.success | - | false | The color which should be used if the actor work was done successfully. |
 | layout.pages[*pageNumber*].trigger[*coordinates*].color.failed | - | false | The color which should be used if the actor work was done wrong. |
+| layout.pages[*pageNumber*].plotter | - | false | Contains settings about the plotters on this page. |
+| layout.pages[*pageNumber*].plotter.progressbar | - | false | Contains all progressbar plotter for this page. |
+| layout.pages[*pageNumber*].plotter.progressbar[].datapoint | - | **true** | The reference for the underlying data point. |
+| layout.pages[*pageNumber*].plotter.progressbar[].min | 0 | false | The minimum value of the progressbar. |
+| layout.pages[*pageNumber*].plotter.progressbar[].max | 0 | false | The maximum value of the progressbar. |
+| layout.pages[*pageNumber*].plotter.progressbar[].vertical | false | false | Is the progressbar a vertical one? |
+| layout.pages[*pageNumber*].plotter.progressbar[].quadrant | *whole pad* | false | In which mathematical quadrant should the progressbar be plotted. |
+| layout.pages[*pageNumber*].plotter.progressbar[].x | - | false | If the progressbar *is vertical*, where should the progressbar be plotted. |
+| layout.pages[*pageNumber*].plotter.progressbar[].y | - | false | If the progressbar *is horizontal*, where should the progressbar be plotted. |
+| layout.pages[*pageNumber*].plotter.progressbar[].rtl | false | false | Should the progressbar be filled from right to left? |
+| layout.pages[*pageNumber*].plotter.progressbar[].fill | 0,0 | false | The filled **color** which should be used. |
+| layout.pages[*pageNumber*].plotter.progressbar[].empty | 0,3 | false | The empty **color** which should be used. |
 
 * *pageNumber*
     * The page number must be a number from **0** until **255**.
@@ -116,3 +139,5 @@ layout:
         * "0-7,0-7" -> all X from 0 until 7 and all Y from 0 until 7
 * *color*
     * "r,g" -> **r** is the red value of the color and must be between 0 and 3. **g** is the green value of the color and must be between 0 and 3.
+* *datapoint reference*
+    * **sensorName**.**datapointName**

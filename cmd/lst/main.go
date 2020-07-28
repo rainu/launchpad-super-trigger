@@ -2,6 +2,7 @@ package main
 
 import (
 	"context"
+	"fmt"
 	"github.com/rainu/launchpad-super-trigger/cmd/lst/config"
 	"github.com/rainu/launchpad-super-trigger/gfx"
 	launchpad "github.com/rainu/launchpad-super-trigger/pad"
@@ -28,7 +29,7 @@ func main() {
 		zap.L().Fatal("error while read configuration: %v", zap.Error(err))
 	}
 
-	dispatcher, err := config.ConfigureDispatcher(configFile)
+	dispatcher, sensors, err := config.ConfigureDispatcher(configFile)
 	if err != nil {
 		zap.L().Fatal("error while opening setup launchpad configuration: %v", zap.Error(err))
 	}
@@ -63,6 +64,12 @@ func main() {
 
 	ctx, cancelFunc := context.WithCancel(context.Background())
 	wg := sync.WaitGroup{}
+
+	//start sensors
+	for sensorName, curSensor := range sensors {
+		zap.L().Info(fmt.Sprintf("Start sensor: %s", sensorName))
+		go curSensor.Run(ctx)
+	}
 
 	wg.Add(1)
 	go func() {
