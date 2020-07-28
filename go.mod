@@ -5,14 +5,14 @@ go 1.14
 require (
 	github.com/eclipse/paho.mqtt.golang v1.2.0
 	github.com/go-playground/universal-translator v0.17.0 // indirect
+	github.com/itchyny/gojq v0.11.0
 	github.com/leodido/go-urn v1.2.0 // indirect
 	github.com/niemeyer/pretty v0.0.0-20200227124842-a10e7caefd8e // indirect
 	github.com/rakyll/launchpad v0.0.0-20200512213241-400be720e7b7
 	github.com/rakyll/portmidi v0.0.0-20191102002215-74e95e8bc9b1
-	github.com/stretchr/testify v1.4.0
+	github.com/stretchr/testify v1.5.0
 	github.com/tidwall/gjson v1.6.0
 	go.uber.org/zap v1.15.0
-	golang.org/x/tools v0.0.0-20191029190741-b9c20aec41a5
 	gopkg.in/check.v1 v1.0.0-20200227125254-8fa46927fb4f // indirect
 	gopkg.in/go-playground/assert.v1 v1.2.1 // indirect
 	gopkg.in/go-playground/validator.v9 v9.31.0

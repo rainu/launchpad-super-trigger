@@ -89,6 +89,7 @@ type MQTTSensor struct {
 
 type DataPoints struct {
 	Gjson map[string]string         `yaml:"gjson" validate:"dive,keys,component_name,endkeys,required"`
+	Gojq  map[string]string         `yaml:"gojq" validate:"dive,keys,component_name,endkeys,required"`
 	Split map[string]SplitDataPoint `yaml:"split" validate:"dive,keys,component_name,endkeys,required"`
 }
 

@@ -99,12 +99,15 @@ func validate(cfg *Config) error {
 		refSensors := reflect.ValueOf(cfg.Sensors)
 		for sensorField := 0; sensorField < refSensors.NumField(); sensorField++ {
 			if refSensors.Field(sensorField).Kind() == reflect.Map {
+				//sensors.mqtt
 				for _, sensorTypeName := range refSensors.Field(sensorField).MapKeys() {
 					sensorValue := refSensors.Field(sensorField).MapIndex(sensorTypeName)
 					for sensorValueField := 0; sensorValueField < sensorValue.NumField(); sensorValueField++ {
+						//sensors.mqtt.data
 						if sensorValue.Field(sensorValueField).Kind() == reflect.ValueOf(DataPoints{}).Kind() {
 							for sensorValueDataPoint := 0; sensorValueDataPoint < sensorValue.Field(sensorValueField).NumField(); sensorValueDataPoint++ {
 								if sensorValue.Field(sensorValueField).Field(sensorValueDataPoint).Kind() == reflect.Map {
+									//sensors.mqtt.data.gjson
 									for _, dpName := range sensorValue.Field(sensorValueField).Field(sensorValueDataPoint).MapKeys() {
 
 										dpPath := fmt.Sprintf("%s.%s", sensorTypeName.String(), dpName.String())

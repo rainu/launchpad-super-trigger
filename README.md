@@ -103,6 +103,8 @@ layout:
 | sensors.mqtt[*name*].data.split | - | false | Contains all split data points. |
 | sensors.mqtt[*name*].data.split[*name*].separator | - | true | The separator which should be used to split the whole data. |
 | sensors.mqtt[*name*].data.split[*name*].index | - | true | The index of the split element which should be used as data point. Must be greater or equal 0! |
+| sensors.mqtt[*name*].data.gojq | - | false | Contains all [gojq](https://github.com/itchyny/gojq) data points. |
+| sensors.mqtt[*name*].data.gojq[*name*] | - | true | The gojq query which should be used to extract the data point. |
 | layout | - | false | Contains all layout settings. |
 | layout.pages | - | false | Contains all page settings. |
 | layout.pages[*pageNumber*] | - | false | Contains a page setting. |
