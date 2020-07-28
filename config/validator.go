@@ -42,6 +42,14 @@ func validate(cfg *Config) error {
 	if err != nil {
 		panic(err)
 	}
+	err = configValidator.RegisterValidation("regexPattern", func(fl validator.FieldLevel) bool {
+		sVal := fl.Field().String()
+		_, err := regexp.Compile(sVal)
+		return err == nil
+	})
+	if err != nil {
+		panic(err)
+	}
 	err = configValidator.RegisterValidation("actor", func(fl validator.FieldLevel) bool {
 		actorName := fl.Field().String()
 

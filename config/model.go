@@ -121,6 +121,7 @@ type ColorSettings struct {
 
 type Plotters struct {
 	Progressbar []Progressbar `yaml:"progressbar" validate:"dive"`
+	Static      []Static      `yaml:"static" validate:"dive"`
 }
 
 type Progressbar struct {
@@ -134,4 +135,39 @@ type Progressbar struct {
 	RightToLeft bool         `yaml:"rtl"`
 	Fill        Color        `yaml:"fill" validate:"color"`
 	Empty       Color        `yaml:"empty" validate:"color"`
+}
+
+type Static struct {
+	DataPoint    string            `yaml:"datapoint" validate:"required,datapoint"`
+	Position     Coordinate        `yaml:"pos" validate:"coord,required"`
+	Expressions  StaticExpressions `yaml:"expressions" validate:"required"`
+	DefaultColor *Color            `yaml:"defaultColor" validate:"omitempty,color"`
+}
+
+type StaticExpressions struct {
+	Eq          []StaticExpression        `yaml:"eq" validate:"dive"`
+	Ne          []StaticExpression        `yaml:"ne" validate:"dive"`
+	Lt          []StaticNumericExpression `yaml:"lt" validate:"dive"`
+	Lte         []StaticNumericExpression `yaml:"lte" validate:"dive"`
+	Gt          []StaticNumericExpression `yaml:"gt" validate:"dive"`
+	Gte         []StaticNumericExpression `yaml:"gte" validate:"dive"`
+	Match       []StaticMatchExpression   `yaml:"match" validate:"dive"`
+	NotMatch    []StaticMatchExpression   `yaml:"nmatch" validate:"dive"`
+	Contains    []StaticExpression        `yaml:"contains" validate:"dive"`
+	NotContains []StaticExpression        `yaml:"ncontains" validate:"dive"`
+}
+
+type StaticExpression struct {
+	Value           string `yaml:"value" validate:"required"`
+	ActivationColor Color  `yaml:"color" validate:"color,required"`
+}
+
+type StaticMatchExpression struct {
+	Value           string `yaml:"value" validate:"required,regexPattern"`
+	ActivationColor Color  `yaml:"color" validate:"color,required"`
+}
+
+type StaticNumericExpression struct {
+	Value           float64 `yaml:"value" validate:"required"`
+	ActivationColor Color   `yaml:"color" validate:"color,required"`
 }

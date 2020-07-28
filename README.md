@@ -128,6 +128,40 @@ layout:
 | layout.pages[*pageNumber*].plotter.progressbar[].rtl | false | false | Should the progressbar be filled from right to left? |
 | layout.pages[*pageNumber*].plotter.progressbar[].fill | 0,0 | false | The filled **color** which should be used. |
 | layout.pages[*pageNumber*].plotter.progressbar[].empty | 0,3 | false | The empty **color** which should be used. |
+| layout.pages[*pageNumber*].plotter.static | - | false | Contains all static plotter for this page. A static plotter will color on button if an expression on the data point matches. |
+| layout.pages[*pageNumber*].plotter.static[].datapoint | - | **true** | The reference for the underlying data point. |
+| layout.pages[*pageNumber*].plotter.static[].pos | - | **true** | The *coordinate* where should plot. |
+| layout.pages[*pageNumber*].plotter.static[].defaultColor | - | false | The color which should be used if no expression matches. |
+| layout.pages[*pageNumber*].plotter.static[].expressions.eq | - | false | This expression matches if the data point is *equal* than the given value. |
+| layout.pages[*pageNumber*].plotter.static[].expressions.eq[].value | - | false | This expression value. |
+| layout.pages[*pageNumber*].plotter.static[].expressions.eq[].color | - | false | The *color* which should be used if the expression matches. |
+| layout.pages[*pageNumber*].plotter.static[].expressions.ne | - | false | This expression matches if the data point is *not equal* than the given value. |
+| layout.pages[*pageNumber*].plotter.static[].expressions.ne[].value | - | false | This expression value. |
+| layout.pages[*pageNumber*].plotter.static[].expressions.ne[].color | - | false | The *color* which should be used if the expression matches. |
+| layout.pages[*pageNumber*].plotter.static[].expressions.lt | - | false | This expression matches if the data point is *less than* the given value. |
+| layout.pages[*pageNumber*].plotter.static[].expressions.lt[].value | - | false | This expression value. |
+| layout.pages[*pageNumber*].plotter.static[].expressions.lt[].color | - | false | The *color* which should be used if the expression matches. |
+| layout.pages[*pageNumber*].plotter.static[].expressions.lte | - | false | This expression matches if the data point is *less or equal* than the given value. |
+| layout.pages[*pageNumber*].plotter.static[].expressions.lte[].value | - | false | This expression value. |
+| layout.pages[*pageNumber*].plotter.static[].expressions.lte[].color | - | false | The *color* which should be used if the expression matches. |
+| layout.pages[*pageNumber*].plotter.static[].expressions.gt | - | false | This expression matches if the data point is *greater than* the given value. |
+| layout.pages[*pageNumber*].plotter.static[].expressions.gt[].value | - | false | This expression value. |
+| layout.pages[*pageNumber*].plotter.static[].expressions.gt[].color | - | false | The *color* which should be used if the expression matches. |
+| layout.pages[*pageNumber*].plotter.static[].expressions.gte | - | false | This expression matches if the data point is *greater or equal than* the given value. |
+| layout.pages[*pageNumber*].plotter.static[].expressions.gte[].value | - | false | This expression value. |
+| layout.pages[*pageNumber*].plotter.static[].expressions.gte[].color | - | false | The *color* which should be used if the expression matches. |
+| layout.pages[*pageNumber*].plotter.static[].expressions.match | - | false | This expression matches if the data point *matches* the given regular expression the given value. |
+| layout.pages[*pageNumber*].plotter.static[].expressions.match[].value | - | false | This expression value. |
+| layout.pages[*pageNumber*].plotter.static[].expressions.match[].color | - | false | The *color* which should be used if the expression matches. |
+| layout.pages[*pageNumber*].plotter.static[].expressions.nmatch | - | false | This expression matches if the data point *not matches* the given regular expression the given value. |
+| layout.pages[*pageNumber*].plotter.static[].expressions.nmatch[].value | - | false | This expression value. |
+| layout.pages[*pageNumber*].plotter.static[].expressions.nmatch[].color | - | false | The *color* which should be used if the expression matches. |
+| layout.pages[*pageNumber*].plotter.static[].expressions.contains | - | false | This expression matches if the data point *contains* the given value. |
+| layout.pages[*pageNumber*].plotter.static[].expressions.contains[].value | - | false | This expression value. |
+| layout.pages[*pageNumber*].plotter.static[].expressions.contains[].color | - | false | The *color* which should be used if the expression matches. |
+| layout.pages[*pageNumber*].plotter.static[].expressions.ncontains | - | false | This expression matches if the data point *contains not* the given value. |
+| layout.pages[*pageNumber*].plotter.static[].expressions.ncontains[].value | - | false | This expression value. |
+| layout.pages[*pageNumber*].plotter.static[].expressions.ncontains[].color | - | false | The *color* which should be used if the expression matches. |
 
 * *pageNumber*
     * The page number must be a number from **0** until **255**.

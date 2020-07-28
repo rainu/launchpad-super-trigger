@@ -9,6 +9,7 @@ func BuildPlotter(plotters config.Plotters) map[plotter.Plotter]string {
 	result := map[plotter.Plotter]string{}
 
 	buildProgressbar(result, plotters.Progressbar)
+	buildStatic(result, plotters.Static)
 
 	return result
 }
