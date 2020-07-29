@@ -40,7 +40,7 @@ type pageHandler struct {
 	actors        map[coord]actor.Actor
 	sensors       map[string]configSensor.Sensor
 	plotters      map[plotter.Plotter]config.Datapoint
-	colorSettings map[coord]ColorSettings
+	colorSettings map[coord]*ColorSettings
 
 	activeProcess      map[coord]context.CancelFunc
 	activeProcessMutex sync.RWMutex
@@ -52,7 +52,7 @@ func (p *pageHandler) Init(actors map[string]actor.Actor, sensors map[string]con
 	p.actors = map[coord]actor.Actor{}
 	p.sensors = sensors
 	p.plotters = plotters
-	p.colorSettings = map[coord]ColorSettings{}
+	p.colorSettings = map[coord]*ColorSettings{}
 	p.activeProcess = map[coord]context.CancelFunc{}
 
 	for triggerCoords, trigger := range p.page.Trigger {
@@ -61,7 +61,7 @@ func (p *pageHandler) Init(actors map[string]actor.Actor, sensors map[string]con
 			if trigger.ColorSettings != nil {
 				p.colorSettings[c] = convertColorSettings(trigger.ColorSettings)
 			} else {
-				p.colorSettings[c] = defaultColorSettings
+				p.colorSettings[c] = &defaultColorSettings
 			}
 
 			p.actors[c] = actors[trigger.Actor]
@@ -86,8 +86,12 @@ func (p *pageHandler) OnTrigger(lighter pad.Lighter, number pad.PageNumber, x in
 			p.activeProcess[coord{x, y}] = cancelFunc
 			p.activeProcessMutex.Unlock()
 
-			if err := p.colorSettings[coord{x, y}].Progress.Light(lighter, x, y); err != nil {
-				zap.L().Debug("Could not light the pad!", zap.Error(err))
+			colorEnabled := p.colorSettings[coord{x, y}] != nil
+
+			if colorEnabled {
+				if err := p.colorSettings[coord{x, y}].Progress.Light(lighter, x, y); err != nil {
+					zap.L().Debug("Could not light the pad!", zap.Error(err))
+				}
 			}
 			err := delegate.Do(actor.Context{
 				Lighter: lighter,
@@ -99,12 +103,16 @@ func (p *pageHandler) OnTrigger(lighter pad.Lighter, number pad.PageNumber, x in
 			if err != nil {
 				zap.L().Error("Actor returns an error: %w", zap.Error(err))
 
-				if err := p.colorSettings[coord{x, y}].Failed.Light(lighter, x, y); err != nil {
-					zap.L().Debug("Could not light the pad!", zap.Error(err))
+				if colorEnabled {
+					if err := p.colorSettings[coord{x, y}].Failed.Light(lighter, x, y); err != nil {
+						zap.L().Debug("Could not light the pad!", zap.Error(err))
+					}
 				}
 			} else {
-				if err := p.colorSettings[coord{x, y}].Success.Light(lighter, x, y); err != nil {
-					zap.L().Debug("Could not light the pad!", zap.Error(err))
+				if colorEnabled {
+					if err := p.colorSettings[coord{x, y}].Success.Light(lighter, x, y); err != nil {
+						zap.L().Debug("Could not light the pad!", zap.Error(err))
+					}
 				}
 			}
 
@@ -121,6 +129,10 @@ func (p *pageHandler) OnPageEnter(lighter pad.Lighter, number pad.PageNumber) er
 	p.lastLighter = lighter
 
 	for c, settings := range p.colorSettings {
+		if settings == nil {
+			continue
+		}
+
 		if err := settings.Ready.Light(lighter, c.X, c.Y); err != nil {
 			zap.L().Debug("Could not light the pad!", zap.Error(err))
 		}
@@ -223,8 +235,12 @@ func convertCoordinates(coordinates config.Coordinates) []coord {
 	return result
 }
 
-func convertColorSettings(settings *config.ColorSettings) ColorSettings {
-	return ColorSettings{
+func convertColorSettings(settings *config.ColorSettings) *ColorSettings {
+	if settings.Disable {
+		return nil
+	}
+
+	return &ColorSettings{
 		Ready:    convertColor(settings.Ready),
 		Progress: convertColor(settings.Progress),
 		Success:  convertColor(settings.Success),

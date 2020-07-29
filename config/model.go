@@ -138,6 +138,7 @@ type Trigger struct {
 }
 
 type ColorSettings struct {
+	Disable  bool  `yaml:"disable"`
 	Ready    Color `yaml:"ready" validate:"color"`
 	Progress Color `yaml:"progress" validate:"color"`
 	Success  Color `yaml:"success" validate:"color"`
