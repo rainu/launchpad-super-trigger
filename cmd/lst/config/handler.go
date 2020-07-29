@@ -144,9 +144,7 @@ func (p *pageHandler) OnPageEnter(lighter pad.Lighter, number pad.PageNumber) er
 
 	//plot available sensor data
 	for _, s := range p.sensors {
-		if len(s.Sensor.LastMessage()) > 0 {
-			p.OnData(s.Sensor)
-		}
+		p.OnData(s.Sensor)
 	}
 
 	return nil
