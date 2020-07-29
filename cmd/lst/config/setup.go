@@ -9,7 +9,7 @@ import (
 	"github.com/rainu/launchpad-super-trigger/pad"
 	"github.com/rainu/launchpad-super-trigger/sensor"
 	"io"
-	"strings"
+	"reflect"
 )
 
 func ConfigureDispatcher(configReader io.Reader) (*pad.TriggerDispatcher, map[string]sensor.Sensor, error) {
@@ -20,8 +20,8 @@ func ConfigureDispatcher(configReader io.Reader) (*pad.TriggerDispatcher, map[st
 
 	dispatcher := &pad.TriggerDispatcher{}
 	connections := connection.BuildMqttConnection(parsedConfig)
-	actors := configActor.BuildActors(parsedConfig, connections)
 	sensors := configSensor.BuildMqttSensors(parsedConfig.Sensors.Mqtt, connections)
+	actors := configActor.BuildActors(parsedConfig, sensors, connections)
 
 	for pageNumber, page := range parsedConfig.Layout.Pages {
 		handler := &pageHandler{
@@ -52,9 +52,27 @@ func ConfigureDispatcher(configReader io.Reader) (*pad.TriggerDispatcher, map[st
 func UsedSensors(p config.Plotters) []string {
 	sensors := map[string]bool{}
 
-	for _, progressbar := range p.Progressbar {
-		sensorName := strings.Split(progressbar.DataPoint, ".")[0]
-		sensors[sensorName] = true
+	refPlotters := reflect.ValueOf(p)
+
+	//Plotters
+	for plottersField := 0; plottersField < refPlotters.NumField(); plottersField++ {
+		if refPlotters.Field(plottersField).Kind() == reflect.Slice {
+
+			//Plotters.Progressbar
+			for i := 0; i < refPlotters.Field(plottersField).Len(); i++ {
+				//Plotters.Progressbar[i]
+
+				valPlotter := refPlotters.Field(plottersField).Index(i)
+
+				for plotterField := 0; plotterField < valPlotter.NumField(); plotterField++ {
+					if valPlotter.Field(plotterField).Type() == reflect.TypeOf(config.Datapoint("")) {
+						dpPath := config.Datapoint(valPlotter.Field(plotterField).String())
+
+						sensors[dpPath.Sensor()] = true
+					}
+				}
+			}
+		}
 	}
 
 	result := make([]string, 0, len(sensors))

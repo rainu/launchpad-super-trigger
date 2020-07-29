@@ -8,6 +8,10 @@ import (
 func buildExtractors(dp config.DataPoints) map[string]data_extractor.Extractor {
 	result := map[string]data_extractor.Extractor{}
 
+	if dp.Complete != "" {
+		result[dp.Complete] = data_extractor.Complete{}
+	}
+
 	buildGjsonExtractors(result, dp.Gjson)
 	buildGojqExtractors(result, dp.Gojq)
 	buildSplitExtractors(result, dp.Split)

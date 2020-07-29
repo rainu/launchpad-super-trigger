@@ -39,14 +39,14 @@ layout:
  pages:
   0:
    trigger:
-    "0,1":
+    0,1:
      actor: rest-test
      color:
       ready: 0,0
       progress: 1,1
       success: 2,2
       failed: 3,3
-    "1,0":
+    1,0:
      actor: mqtt-test
 ```
 
@@ -77,6 +77,21 @@ layout:
 | actors.combined | - | false | Contains all available combined actors. An combined actor will call other actors (sequential or in parallel). |
 | actors.combined[*name*].actors | - | **true** | The list of underlying actor names. Must be greater or equal than 2! |
 | actors.combined[*name*].parallel | false | false | How should the underlying actors be called. If true they will be called parallel. Otherwise the will be called sequential. |
+| actors.conditional | - | false | Contains all available conditional actors. An conditional actor will call other actors depends on the given conditions. |
+| actors.conditional[*name*].conditions | - | **true** | Contains the conditions. |
+| actors.conditional[*name*].conditions[].actor | - | **true** | The actor which should be called if the condition is met. |
+| actors.conditional[*name*].conditions[].datapoint | - | **true** | The reference for the underlying data point. |
+| actors.conditional[*name*].conditions[].expression | - | **true** | The reference for the underlying data point. |
+| actors.conditional[*name*].conditions[].expression.eq | - | false | This expression matches if the data point is *equal* than the given value. |
+| actors.conditional[*name*].conditions[].expression.ne | - | false | This expression matches if the data point is *not equal* than the given value. |
+| actors.conditional[*name*].conditions[].expression.lt | - | false | This expression matches if the data point is *less than* the given value. |
+| actors.conditional[*name*].conditions[].expression.lte | - | false | This expression matches if the data point is *less or equal* than the given value. |
+| actors.conditional[*name*].conditions[].expression.gt | - | false | This expression matches if the data point is *greater than* the given value. |
+| actors.conditional[*name*].conditions[].expression.gte | - | false | This expression matches if the data point is *greater or equal than* the given value. |
+| actors.conditional[*name*].conditions[].expression.match | - | false | This expression matches if the data point *matches* the given regular expression the given value. |
+| actors.conditional[*name*].conditions[].expression.nmatch | - | false | This expression matches if the data point *not matches* the given regular expression the given value. |
+| actors.conditional[*name*].conditions[].expression.contains | - | false | This expression matches if the data point *contains* the given value. |
+| actors.conditional[*name*].conditions[].expression.ncontains | - | false | This expression matches if the data point *contains not* the given value. |
 | actors.gfxBlink | - | false | Contains all available gfx blink actors. A blink actor will draw blinking pads. |
 | actors.gfxBlink[*name*].on | - | true | The on *color*. |
 | actors.gfxBlink[*name*].off | 0,0 | false | The off *color*. |
@@ -98,6 +113,7 @@ layout:
 | sensors.mqtt[*name*].topic | - | **true** | The topic name. |
 | sensors.mqtt[*name*].qos | 0 | false | The QualityOfService for the subscription message. |
 | sensors.mqtt[*name*].data | - | false | Contains all data points. A data point is a part of the received message. |
+| sensors.mqtt[*name*].data.complete | - | false | The name of the data point for the complete message. |
 | sensors.mqtt[*name*].data.gjson | - | false | Contains all [gjson](https://github.com/tidwall/gjson) data points. |
 | sensors.mqtt[*name*].data.gjson[*name*] | - | false | The gjson path to use to extract data point. |
 | sensors.mqtt[*name*].data.split | - | false | Contains all split data points. |

@@ -95,10 +95,9 @@ func validate(cfg *Config) error {
 		panic(err)
 	}
 	err = configValidator.RegisterValidation("datapoint", func(fl validator.FieldLevel) bool {
-		dpPath := fl.Field().String()
-		split := strings.Split(dpPath, ".")
+		dpPath := Datapoint(fl.Field().String())
 
-		if len(split) != 2 {
+		if !dpPath.IsValid() {
 			return false
 		}
 
@@ -123,13 +122,19 @@ func validate(cfg *Config) error {
 									}
 								}
 							}
+
+							completeField := sensorValue.Field(sensorValueField).FieldByName("Complete")
+							if completeField.String() != "" {
+								dpPath := fmt.Sprintf("%s.%s", sensorTypeName.String(), completeField.String())
+								knownDatapointPaths[dpPath] = true
+							}
 						}
 					}
 				}
 			}
 		}
 
-		return knownDatapointPaths[dpPath]
+		return knownDatapointPaths[dpPath.Path()]
 	})
 	if err != nil {
 		panic(err)

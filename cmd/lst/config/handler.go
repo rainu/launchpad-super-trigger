@@ -39,7 +39,7 @@ type pageHandler struct {
 	page          config.Page
 	actors        map[coord]actor.Actor
 	sensors       map[string]configSensor.Sensor
-	plotters      map[plotter.Plotter]string
+	plotters      map[plotter.Plotter]config.Datapoint
 	colorSettings map[coord]ColorSettings
 
 	activeProcess      map[coord]context.CancelFunc
@@ -48,7 +48,7 @@ type pageHandler struct {
 	lastLighter pad.Lighter
 }
 
-func (p *pageHandler) Init(actors map[string]actor.Actor, sensors map[string]configSensor.Sensor, plotters map[plotter.Plotter]string) {
+func (p *pageHandler) Init(actors map[string]actor.Actor, sensors map[string]configSensor.Sensor, plotters map[plotter.Plotter]config.Datapoint) {
 	p.actors = map[coord]actor.Actor{}
 	p.sensors = sensors
 	p.plotters = plotters
@@ -174,8 +174,8 @@ func (p *pageHandler) OnData(sensor sensor.Sensor) {
 	}
 
 	for responsiblePlotter, dataPoint := range p.plotters {
-		if strings.HasPrefix(dataPoint, sensorName+".") {
-			dpName := strings.Split(dataPoint, ".")[1]
+		if strings.HasPrefix(dataPoint.Path(), sensorName+".") {
+			dpName := dataPoint.Name()
 			extract, err := extractors[dpName].Extract(sensor.LastMessage())
 
 			if err != nil {

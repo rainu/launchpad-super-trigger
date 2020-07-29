@@ -24,10 +24,11 @@ type MQTTConnection struct {
 }
 
 type Actors struct {
-	Rest     map[string]RestActor     `yaml:"rest,omitempty" validate:"dive,keys,component_name,endkeys,required"`
-	Mqtt     map[string]MQTTActor     `yaml:"mqtt,omitempty" validate:"dive,keys,component_name,endkeys,required"`
-	Command  map[string]CommandActor  `yaml:"command,omitempty" validate:"dive,keys,component_name,endkeys,required"`
-	Combined map[string]CombinedActor `yaml:"combined,omitempty" validate:"dive,keys,component_name,endkeys,required"`
+	Rest        map[string]RestActor        `yaml:"rest,omitempty" validate:"dive,keys,component_name,endkeys,required"`
+	Mqtt        map[string]MQTTActor        `yaml:"mqtt,omitempty" validate:"dive,keys,component_name,endkeys,required"`
+	Conditional map[string]ConditionalActor `yaml:"conditional,omitempty" validate:"dive,keys,component_name,endkeys,required"`
+	Command     map[string]CommandActor     `yaml:"command,omitempty" validate:"dive,keys,component_name,endkeys,required"`
+	Combined    map[string]CombinedActor    `yaml:"combined,omitempty" validate:"dive,keys,component_name,endkeys,required"`
 
 	GfxBlink map[string]GfxBlinkActor `yaml:"gfxBlink,omitempty" validate:"dive,keys,component_name,endkeys,required"`
 	GfxWave  map[string]GfxWaveActor  `yaml:"gfxWave,omitempty" validate:"dive,keys,component_name,endkeys,required"`
@@ -50,6 +51,29 @@ type MQTTActor struct {
 	BodyB64    string `yaml:"bodyBase64" validate:"omitempty,base64"`
 	BodyPath   string `yaml:"bodyPath" validate:"omitempty,file"`
 	BodyRaw    string `yaml:"body"`
+}
+
+type ConditionalActor struct {
+	Conditions []Condition `yaml:"conditions" validate:"dive,required"`
+}
+
+type Condition struct {
+	Actor      string              `yaml:"actor" validate:"required,actor"`
+	DataPoint  Datapoint           `yaml:"datapoint" validate:"required,datapoint"`
+	Expression ConditionExpression `yaml:"expression" validate:"required"`
+}
+
+type ConditionExpression struct {
+	Eq          *string  `yaml:"eq"`
+	Ne          *string  `yaml:"ne"`
+	Lt          *float64 `yaml:"lt"`
+	Lte         *float64 `yaml:"lte"`
+	Gt          *float64 `yaml:"gt"`
+	Gte         *float64 `yaml:"gte"`
+	Match       *string  `yaml:"match" validate:"omitempty,regexPattern"`
+	NotMatch    *string  `yaml:"nmatch" validate:"omitempty,regexPattern"`
+	Contains    *string  `yaml:"contains"`
+	NotContains *string  `yaml:"ncontains"`
 }
 
 type CommandActor struct {
@@ -88,9 +112,10 @@ type MQTTSensor struct {
 }
 
 type DataPoints struct {
-	Gjson map[string]string         `yaml:"gjson" validate:"dive,keys,component_name,endkeys,required"`
-	Gojq  map[string]string         `yaml:"gojq" validate:"dive,keys,component_name,endkeys,required"`
-	Split map[string]SplitDataPoint `yaml:"split" validate:"dive,keys,component_name,endkeys,required"`
+	Complete string                    `yaml:"complete"`
+	Gjson    map[string]string         `yaml:"gjson" validate:"dive,keys,component_name,endkeys,required"`
+	Gojq     map[string]string         `yaml:"gojq" validate:"dive,keys,component_name,endkeys,required"`
+	Split    map[string]SplitDataPoint `yaml:"split" validate:"dive,keys,component_name,endkeys,required"`
 }
 
 type SplitDataPoint struct {
@@ -125,7 +150,7 @@ type Plotters struct {
 }
 
 type Progressbar struct {
-	DataPoint   string       `yaml:"datapoint" validate:"required,datapoint"`
+	DataPoint   Datapoint    `yaml:"datapoint" validate:"required,datapoint"`
 	X           int          `yaml:"x"`
 	Y           int          `yaml:"y"`
 	Min         float64      `yaml:"min"`
@@ -138,7 +163,7 @@ type Progressbar struct {
 }
 
 type Static struct {
-	DataPoint    string            `yaml:"datapoint" validate:"required,datapoint"`
+	DataPoint    Datapoint         `yaml:"datapoint" validate:"required,datapoint"`
 	Position     Coordinate        `yaml:"pos" validate:"coord,required"`
 	Expressions  StaticExpressions `yaml:"expressions" validate:"required"`
 	DefaultColor *Color            `yaml:"defaultColor" validate:"omitempty,color"`

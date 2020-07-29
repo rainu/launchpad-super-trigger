@@ -218,6 +218,89 @@ actors:
 			},
 		},
 		{
+			`simple conditional`,
+			`
+connections:
+	mqtt:
+		b1:
+			broker: tcp://broker:1883
+sensors:
+	mqtt:
+		test:
+			connection: b1
+			topic: test
+			data:
+				gjson:
+					test: test
+actors:
+	rest:
+		test:
+			url: "http://localhost:1312"
+	conditional:
+		c-test:
+			conditions:
+				- actor: test
+				  datapoint: test.test
+				  expressions:
+				    eq: ""`,
+			Config{
+				Connections: Connections{
+					MQTT: map[string]MQTTConnection{
+						"b1": {
+							Broker: "tcp://broker:1883",
+						},
+					},
+				},
+				Sensors: Sensors{
+					Mqtt: map[string]MQTTSensor{
+						"test": {
+							Connection: "b1",
+							Topic:      "test",
+							DataPoints: DataPoints{
+								Gjson: map[string]string{
+									"test": "test",
+								},
+							},
+						},
+					},
+				},
+				Actors: Actors{
+					Rest: map[string]RestActor{
+						"test": {
+							URL: "http://localhost:1312",
+						},
+					},
+					Conditional: map[string]ConditionalActor{
+						"c-test": {
+							Conditions: []Condition{{
+								Actor:     "test",
+								DataPoint: "test.test",
+								Expression: ConditionExpression{
+									Eq: s2p(""),
+								},
+							}},
+						},
+					},
+				},
+			},
+			[]string{},
+		},
+		{
+			`simple conditional`,
+			`
+actors:
+	conditional:
+		c-test:
+			conditions:
+				- actor: test
+				  datapoint: test.test`,
+			Config{},
+			[]string{
+				"Key: 'Config.Actors.Conditional[c-test].Conditions[0].Actor'",
+				"Key: 'Config.Actors.Conditional[c-test].Conditions[0].DataPoint'",
+			},
+		},
+		{
 			`simple gfx blink`,
 			`
 actors:
@@ -500,4 +583,8 @@ sensors:
 			}
 		})
 	}
+}
+
+func s2p(s string) *string {
+	return &s
 }

@@ -1,15 +1,13 @@
 package plotter
 
 import (
+	"github.com/rainu/launchpad-super-trigger/cmd/lst/config/expressions"
 	"github.com/rainu/launchpad-super-trigger/config"
 	"github.com/rainu/launchpad-super-trigger/pad"
 	"github.com/rainu/launchpad-super-trigger/plotter"
-	"regexp"
-	"strconv"
-	"strings"
 )
 
-func buildStatic(allPlotter map[plotter.Plotter]string, staticPlotter []config.Static) {
+func buildStatic(allPlotter map[plotter.Plotter]config.Datapoint, staticPlotter []config.Static) {
 	for _, static := range staticPlotter {
 		x, y, _ := static.Position.Coordinate()
 		sb := &plotter.Static{
@@ -22,176 +20,65 @@ func buildStatic(allPlotter map[plotter.Plotter]string, staticPlotter []config.S
 		for _, expression := range static.Expressions.Eq {
 			sb.Expressions = append(sb.Expressions, plotter.StaticExpression{
 				ActivationColor: colorOrDefault(expression.ActivationColor, pad.ColorHighGreen),
-				Matches:         buildEqExpressionFn(expression),
+				Matches:         expressions.BuildEqExpressionFn(expression.Value),
 			})
 		}
 		for _, expression := range static.Expressions.Ne {
 			sb.Expressions = append(sb.Expressions, plotter.StaticExpression{
 				ActivationColor: colorOrDefault(expression.ActivationColor, pad.ColorHighGreen),
-				Matches:         buildNeExpressionFn(expression),
+				Matches:         expressions.BuildNeExpressionFn(expression.Value),
 			})
 		}
 		for _, expression := range static.Expressions.Lt {
 			sb.Expressions = append(sb.Expressions, plotter.StaticExpression{
 				ActivationColor: colorOrDefault(expression.ActivationColor, pad.ColorHighGreen),
-				Matches:         buildLtExpressionFn(expression),
+				Matches:         expressions.BuildLtExpressionFn(expression.Value),
 			})
 		}
 		for _, expression := range static.Expressions.Lte {
 			sb.Expressions = append(sb.Expressions, plotter.StaticExpression{
 				ActivationColor: colorOrDefault(expression.ActivationColor, pad.ColorHighGreen),
-				Matches:         buildLteExpressionFn(expression),
+				Matches:         expressions.BuildLteExpressionFn(expression.Value),
 			})
 		}
 		for _, expression := range static.Expressions.Gt {
 			sb.Expressions = append(sb.Expressions, plotter.StaticExpression{
 				ActivationColor: colorOrDefault(expression.ActivationColor, pad.ColorHighGreen),
-				Matches:         buildGtExpressionFn(expression),
+				Matches:         expressions.BuildGtExpressionFn(expression.Value),
 			})
 		}
 		for _, expression := range static.Expressions.Gte {
 			sb.Expressions = append(sb.Expressions, plotter.StaticExpression{
 				ActivationColor: colorOrDefault(expression.ActivationColor, pad.ColorHighGreen),
-				Matches:         buildGteExpressionFn(expression),
+				Matches:         expressions.BuildGteExpressionFn(expression.Value),
 			})
 		}
 		for _, expression := range static.Expressions.Match {
 			sb.Expressions = append(sb.Expressions, plotter.StaticExpression{
 				ActivationColor: colorOrDefault(expression.ActivationColor, pad.ColorHighGreen),
-				Matches:         buildMatchExpressionFn(expression),
+				Matches:         expressions.BuildMatchExpressionFn(expression.Value),
 			})
 		}
 		for _, expression := range static.Expressions.NotMatch {
 			sb.Expressions = append(sb.Expressions, plotter.StaticExpression{
 				ActivationColor: colorOrDefault(expression.ActivationColor, pad.ColorHighGreen),
-				Matches:         buildNotMatchExpressionFn(expression),
+				Matches:         expressions.BuildNotMatchExpressionFn(expression.Value),
 			})
 		}
 		for _, expression := range static.Expressions.Contains {
 			sb.Expressions = append(sb.Expressions, plotter.StaticExpression{
 				ActivationColor: colorOrDefault(expression.ActivationColor, pad.ColorHighGreen),
-				Matches:         buildContainsExpressionFn(expression),
+				Matches:         expressions.BuildContainsExpressionFn(expression.Value),
 			})
 		}
 		for _, expression := range static.Expressions.NotContains {
 			sb.Expressions = append(sb.Expressions, plotter.StaticExpression{
 				ActivationColor: colorOrDefault(expression.ActivationColor, pad.ColorHighGreen),
-				Matches:         buildNotContainsExpressionFn(expression),
+				Matches:         expressions.BuildNotContainsExpressionFn(expression.Value),
 			})
 		}
 
 		allPlotter[sb] = static.DataPoint
-	}
-}
-
-func buildEqExpressionFn(expr config.StaticExpression) func([]byte) bool {
-	isNumericValue := false
-	fExpValue, err := strconv.ParseFloat(expr.Value, 64)
-	if err == nil {
-		isNumericValue = true
-	}
-
-	return func(value []byte) bool {
-		if isNumericValue {
-			fValue, err := strconv.ParseFloat(string(value), 64)
-			if err != nil {
-				return false
-			}
-
-			return fValue == fExpValue
-		}
-
-		return expr.Value == string(value)
-	}
-}
-
-func buildNeExpressionFn(expr config.StaticExpression) func([]byte) bool {
-	isNumericValue := false
-	fExpValue, err := strconv.ParseFloat(expr.Value, 64)
-	if err == nil {
-		isNumericValue = true
-	}
-
-	return func(value []byte) bool {
-		if isNumericValue {
-			fValue, err := strconv.ParseFloat(string(value), 64)
-			if err != nil {
-				return false
-			}
-
-			return fValue != fExpValue
-		}
-
-		return expr.Value != string(value)
-	}
-}
-func buildLtExpressionFn(expr config.StaticNumericExpression) func([]byte) bool {
-	return func(value []byte) bool {
-		fValue, err := strconv.ParseFloat(string(value), 64)
-		if err == nil {
-			return fValue < expr.Value
-		}
-
-		return false
-	}
-}
-
-func buildLteExpressionFn(expr config.StaticNumericExpression) func([]byte) bool {
-	return func(value []byte) bool {
-		fValue, err := strconv.ParseFloat(string(value), 64)
-		if err == nil {
-			return fValue <= expr.Value
-		}
-
-		return false
-	}
-}
-
-func buildGtExpressionFn(expr config.StaticNumericExpression) func([]byte) bool {
-	return func(value []byte) bool {
-		fValue, err := strconv.ParseFloat(string(value), 64)
-		if err == nil {
-			return fValue > expr.Value
-		}
-
-		return false
-	}
-}
-
-func buildGteExpressionFn(expr config.StaticNumericExpression) func([]byte) bool {
-	return func(value []byte) bool {
-		fValue, err := strconv.ParseFloat(string(value), 64)
-		if err == nil {
-			return fValue >= expr.Value
-		}
-
-		return false
-	}
-}
-
-func buildMatchExpressionFn(expr config.StaticMatchExpression) func([]byte) bool {
-	re := regexp.MustCompile(expr.Value)
-	return func(value []byte) bool {
-		return re.Match(value)
-	}
-}
-
-func buildNotMatchExpressionFn(expr config.StaticMatchExpression) func([]byte) bool {
-	re := regexp.MustCompile(expr.Value)
-	return func(value []byte) bool {
-		return !re.Match(value)
-	}
-}
-
-func buildContainsExpressionFn(expr config.StaticExpression) func([]byte) bool {
-	return func(value []byte) bool {
-		return strings.Contains(string(value), expr.Value)
-	}
-}
-
-func buildNotContainsExpressionFn(expr config.StaticExpression) func([]byte) bool {
-	return func(value []byte) bool {
-		return !strings.Contains(string(value), expr.Value)
 	}
 }
 

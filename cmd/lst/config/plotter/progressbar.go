@@ -7,7 +7,7 @@ import (
 	"github.com/rainu/launchpad-super-trigger/plotter"
 )
 
-func buildProgressbar(allPlotter map[plotter.Plotter]string, progressPlotter []config.Progressbar) {
+func buildProgressbar(allPlotter map[plotter.Plotter]config.Datapoint, progressPlotter []config.Progressbar) {
 	for _, progressbar := range progressPlotter {
 		pb := plotter.Progressbar{
 			X:         progressbar.X,
