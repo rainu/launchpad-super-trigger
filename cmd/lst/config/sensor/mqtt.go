@@ -6,11 +6,9 @@ import (
 	"github.com/rainu/launchpad-super-trigger/sensor"
 )
 
-func BuildMqttSensors(mqttSensors map[string]config.MQTTSensor, mqttConnections map[string]MQTT.Client) map[string]Sensor {
-	result := map[string]Sensor{}
-
+func buildMqttSensors(sensors map[string]Sensor, mqttSensors map[string]config.MQTTSensor, mqttConnections map[string]MQTT.Client) {
 	for sensorName, mqttSensor := range mqttSensors {
-		result[sensorName] = Sensor{
+		sensors[sensorName] = Sensor{
 			Sensor: &sensor.MQTT{
 				Client: mqttConnections[mqttSensor.Connection],
 				Topic:  mqttSensor.Topic,
@@ -19,6 +17,4 @@ func BuildMqttSensors(mqttSensors map[string]config.MQTTSensor, mqttConnections 
 			Extractors: buildExtractors(mqttSensor.DataPoints),
 		}
 	}
-
-	return result
 }

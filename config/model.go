@@ -102,13 +102,25 @@ type GfxWaveActor struct {
 
 type Sensors struct {
 	Mqtt map[string]MQTTSensor `yaml:"mqtt,omitempty" validate:"dive,keys,component_name,endkeys,required"`
+	Rest map[string]RestSensor `yaml:"rest,omitempty" validate:"dive,keys,component_name,endkeys,required"`
 }
 
 type MQTTSensor struct {
 	Connection string     `yaml:"connection" validate:"required,connection_mqtt"`
 	Topic      string     `yaml:"topic" validate:"required"`
 	QOS        byte       `yaml:"qos" validate:"gte=0,lte=2"`
-	DataPoints DataPoints `yaml:"data"`
+	DataPoints DataPoints `yaml:"data" validate:"required"`
+}
+
+type RestSensor struct {
+	Method     string              `yaml:"method"`
+	URL        string              `yaml:"url" validate:"required,url"`
+	Header     map[string][]string `yaml:"header"`
+	BodyB64    string              `yaml:"bodyBase64" validate:"omitempty,base64"`
+	BodyPath   string              `yaml:"bodyPath" validate:"omitempty,file"`
+	BodyRaw    string              `yaml:"body"`
+	Interval   time.Duration       `yaml:"interval" validate:"required"`
+	DataPoints DataPoints          `yaml:"data" validate:"required"`
 }
 
 type DataPoints struct {

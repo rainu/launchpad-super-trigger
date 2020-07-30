@@ -20,7 +20,7 @@ func ConfigureDispatcher(configReader io.Reader) (*pad.TriggerDispatcher, map[st
 
 	dispatcher := &pad.TriggerDispatcher{}
 	connections := connection.BuildMqttConnection(parsedConfig)
-	sensors := configSensor.BuildMqttSensors(parsedConfig.Sensors.Mqtt, connections)
+	sensors := configSensor.BuildSensors(parsedConfig.Sensors, connections)
 	actors := configActor.BuildActors(parsedConfig, sensors, connections)
 
 	for pageNumber, page := range parsedConfig.Layout.Pages {

@@ -1,6 +1,8 @@
 package sensor
 
 import (
+	MQTT "github.com/eclipse/paho.mqtt.golang"
+	"github.com/rainu/launchpad-super-trigger/config"
 	"github.com/rainu/launchpad-super-trigger/sensor"
 	"github.com/rainu/launchpad-super-trigger/sensor/data_extractor"
 	"sync"
@@ -33,4 +35,13 @@ func (d *DataObserver) RemoveListener(dl DataListener) {
 	defer d.listenerMutex.Unlock()
 
 	delete(d.listener, dl)
+}
+
+func BuildSensors(sensors config.Sensors, mqttConnections map[string]MQTT.Client) map[string]Sensor {
+	result := map[string]Sensor{}
+
+	buildMqttSensors(result, sensors.Mqtt, mqttConnections)
+	buildRestSensors(result, sensors.Rest)
+
+	return result
 }

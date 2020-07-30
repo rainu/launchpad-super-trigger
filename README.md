@@ -121,6 +121,14 @@ layout:
 | sensors.mqtt[*name*].data.split[*name*].index | - | true | The index of the split element which should be used as data point. Must be greater or equal 0! |
 | sensors.mqtt[*name*].data.gojq | - | false | Contains all [gojq](https://github.com/itchyny/gojq) data points. |
 | sensors.mqtt[*name*].data.gojq[*name*] | - | true | The gojq query which should be used to extract the data point. |
+| sensors.rest | - | false | Contains all available rest sensors. An rest sensor will call an rest service in an given interval. |
+| sensors.rest[*name*].method | GET | false | The http method which should be used. |
+| sensors.rest[*name*].url | - | **true** | The target url. |
+| sensors.rest[*name*].header[*name*][]*value* | - | false | The http headers which should be used. |
+| sensors.rest[*name*].body | - | false | The body content for the http request. |
+| sensors.rest[*name*].bodyBase64 | - | false | The body content for the http request encoded in base64. |
+| sensors.rest[*name*].bodyPath | - | false | The body file for the http request. |
+| sensors.rest[*name*].interval | - | **true** | The interval. |
 | layout | - | false | Contains all layout settings. |
 | layout.pages | - | false | Contains all page settings. |
 | layout.pages[*pageNumber*] | - | false | Contains a page setting. |
