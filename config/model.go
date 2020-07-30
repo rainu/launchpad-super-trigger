@@ -101,8 +101,9 @@ type GfxWaveActor struct {
 }
 
 type Sensors struct {
-	Mqtt map[string]MQTTSensor `yaml:"mqtt,omitempty" validate:"dive,keys,component_name,endkeys,required"`
-	Rest map[string]RestSensor `yaml:"rest,omitempty" validate:"dive,keys,component_name,endkeys,required"`
+	Mqtt    map[string]MQTTSensor    `yaml:"mqtt,omitempty" validate:"dive,keys,component_name,endkeys,required"`
+	Rest    map[string]RestSensor    `yaml:"rest,omitempty" validate:"dive,keys,component_name,endkeys,required"`
+	Command map[string]CommandSensor `yaml:"command,omitempty" validate:"dive,keys,component_name,endkeys,required"`
 }
 
 type MQTTSensor struct {
@@ -121,6 +122,13 @@ type RestSensor struct {
 	BodyRaw    string              `yaml:"body"`
 	Interval   time.Duration       `yaml:"interval" validate:"required"`
 	DataPoints DataPoints          `yaml:"data" validate:"required"`
+}
+
+type CommandSensor struct {
+	Name       string        `yaml:"name" validate:"required"`
+	Arguments  []string      `yaml:"args"`
+	Interval   time.Duration `yaml:"interval" validate:"required"`
+	DataPoints DataPoints    `yaml:"data" validate:"required"`
 }
 
 type DataPoints struct {

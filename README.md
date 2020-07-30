@@ -108,6 +108,19 @@ layout:
 | connections.mqtt[*name*].username | - | false | The username. |
 | connections.mqtt[*name*].password | - | false | The password. |
 | sensors | - | false | Contains all available sensors. A sensor will listen for (incoming) data. |
+| sensors.command | - | false | Contains all available command actors. A command actor will runs a command on the local machine. |
+| sensors.command[*name*].name | - | **true** | The name/path of the command to execute. |
+| sensors.command[*name*].args | - | false | A list of arguments which will be send to the command. |
+| sensors.command[*name*].interval | - | **true** | The interval. |
+| sensors.command[*name*].data | - | false | Contains all data points. A data point is a part of the received message. |
+| sensors.command[*name*].data.complete | - | false | The name of the data point for the complete message. |
+| sensors.command[*name*].data.gjson | - | false | Contains all [gjson](https://github.com/tidwall/gjson) data points. |
+| sensors.command[*name*].data.gjson[*name*] | - | false | The gjson path to use to extract data point. |
+| sensors.command[*name*].data.split | - | false | Contains all split data points. |
+| sensors.command[*name*].data.split[*name*].separator | - | true | The separator which should be used to split the whole data. |
+| sensors.command[*name*].data.split[*name*].index | - | true | The index of the split element which should be used as data point. Must be greater or equal 0! |
+| sensors.command[*name*].data.gojq | - | false | Contains all [gojq](https://github.com/itchyny/gojq) data points. |
+| sensors.command[*name*].data.gojq[*name*] | - | true | The gojq query which should be used to extract the data point. |
 | sensors.mqtt | - | false | Contains all available mqtt sensors. A mqtt sensor will listen for mqtt topics. |
 | sensors.mqtt[*name*].connection | - | **true** | The name of to mqtt connection which should be used for this mqtt sensor. |
 | sensors.mqtt[*name*].topic | - | **true** | The topic name. |
@@ -129,6 +142,15 @@ layout:
 | sensors.rest[*name*].bodyBase64 | - | false | The body content for the http request encoded in base64. |
 | sensors.rest[*name*].bodyPath | - | false | The body file for the http request. |
 | sensors.rest[*name*].interval | - | **true** | The interval. |
+| sensors.rest[*name*].data | - | false | Contains all data points. A data point is a part of the received message. |
+| sensors.rest[*name*].data.complete | - | false | The name of the data point for the complete message. |
+| sensors.rest[*name*].data.gjson | - | false | Contains all [gjson](https://github.com/tidwall/gjson) data points. |
+| sensors.rest[*name*].data.gjson[*name*] | - | false | The gjson path to use to extract data point. |
+| sensors.rest[*name*].data.split | - | false | Contains all split data points. |
+| sensors.rest[*name*].data.split[*name*].separator | - | true | The separator which should be used to split the whole data. |
+| sensors.rest[*name*].data.split[*name*].index | - | true | The index of the split element which should be used as data point. Must be greater or equal 0! |
+| sensors.rest[*name*].data.gojq | - | false | Contains all [gojq](https://github.com/itchyny/gojq) data points. |
+| sensors.rest[*name*].data.gojq[*name*] | - | true | The gojq query which should be used to extract the data point. |
 | layout | - | false | Contains all layout settings. |
 | layout.pages | - | false | Contains all page settings. |
 | layout.pages[*pageNumber*] | - | false | Contains a page setting. |

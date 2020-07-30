@@ -42,6 +42,7 @@ func BuildSensors(sensors config.Sensors, mqttConnections map[string]MQTT.Client
 
 	buildMqttSensors(result, sensors.Mqtt, mqttConnections)
 	buildRestSensors(result, sensors.Rest)
+	buildCommandSensors(result, sensors.Command)
 
 	return result
 }

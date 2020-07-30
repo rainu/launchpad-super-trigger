@@ -31,8 +31,7 @@ func (r *Rest) Run(ctx context.Context) error {
 		return fmt.Errorf("listerner is already running")
 	}
 
-	ticker := time.NewTicker(r.Interval)
-	defer ticker.Stop()
+	timer := time.NewTimer(r.Interval)
 
 	r.running = true
 
@@ -43,10 +42,13 @@ func (r *Rest) Run(ctx context.Context) error {
 
 	for {
 		select {
-		case <-ticker.C:
+		case <-timer.C:
 			if err := r.call(ctx); err != nil {
 				zap.L().Error("Error while call rest sensor!", zap.Error(err))
 			}
+
+			//reset timer
+			timer = time.NewTimer(r.Interval)
 
 		//wait until context closed
 		case <-ctx.Done():
