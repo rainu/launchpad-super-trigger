@@ -144,7 +144,7 @@ type SplitDataPoint struct {
 }
 
 type Layout struct {
-	Pages map[int]Page `yaml:"pages" validate:"dive,keys,gte=0,lte=255,endkeys,required"`
+	Pages map[PageNumber]Page `yaml:"pages" validate:"dive,keys,pagenumber,endkeys,required"`
 }
 
 type Page struct {

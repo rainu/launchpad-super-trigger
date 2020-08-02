@@ -42,6 +42,13 @@ func validate(cfg *Config) error {
 	if err != nil {
 		panic(err)
 	}
+	err = configValidator.RegisterValidation("pagenumber", func(fl validator.FieldLevel) bool {
+		sVal := PageNumber(fl.Field().String())
+		return sVal.isValid()
+	})
+	if err != nil {
+		panic(err)
+	}
 	err = configValidator.RegisterValidation("regexPattern", func(fl validator.FieldLevel) bool {
 		sVal := fl.Field().String()
 		_, err := regexp.Compile(sVal)

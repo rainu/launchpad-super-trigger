@@ -25,7 +25,7 @@ func ConfigureDispatcher(configReader io.Reader) (*pad.TriggerDispatcher, map[st
 
 	for pageNumber, page := range parsedConfig.Layout.Pages {
 		handler := &pageHandler{
-			pageNumber: pad.PageNumber(pageNumber),
+			pageNumber: pad.PageNumber(pageNumber.AsInt()),
 			page:       page,
 		}
 		plotters := configPlotter.BuildPlotter(page.Plotter)

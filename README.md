@@ -212,6 +212,8 @@ layout:
 
 * *pageNumber*
     * The page number must be a number from **0** until **255**.
+    * or it can be a string representing the top page line, where each active button is a "1" nad the others "0"
+        * for example: 10000001    (the first an last page button must be active for this page)
 * *coordinate*
     * "X,Y" -> X and Y must have a value of 0-7.
 * *coordinates* (plural)
