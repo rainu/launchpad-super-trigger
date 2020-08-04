@@ -33,6 +33,10 @@ func (e Renderer) horizontalQuadrantProgressbar(y, xFrom, xUntil, percent int, d
 	x0 := xFrom
 	x1 := xFrom + ((length * percent) / 100) - 1
 
+	if x1 < 0 {
+		return nil
+	}
+
 	if dir == DescDirection {
 		x0 = xUntil - 1
 		x1 = xUntil - ((length * percent) / 100)
@@ -68,6 +72,10 @@ func (e Renderer) verticalQuadrantProgressbar(x, yFrom, yUntil, percent int, dir
 
 	y0 := yFrom - 1
 	y1 := yFrom + ((length * percent) / 100)
+
+	if y1 > maxY {
+		return nil
+	}
 
 	if dir == DescDirection {
 		y0 = yUntil
