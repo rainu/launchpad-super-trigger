@@ -1,6 +1,6 @@
 package pad
 
-var setColor = ColorNormalGreen
+var setColor = ColorHighGreen
 var unsetColor = ColorOff
 var EmptyPage = Page{
 	ColorRepresentation: []Color{unsetColor, unsetColor, unsetColor, unsetColor, unsetColor, unsetColor, unsetColor, unsetColor},
@@ -66,6 +66,16 @@ func (p *Page) Toggle(pos int) {
 		p.ColorRepresentation[pos] = unsetColor
 	} else {
 		p.ColorRepresentation[pos] = setColor
+	}
+}
+
+func (p *Page) SetTo(pos int) {
+	for i := range p.ColorRepresentation {
+		if i == pos {
+			p.ColorRepresentation[i] = setColor
+		} else {
+			p.ColorRepresentation[i] = unsetColor
+		}
 	}
 }
 

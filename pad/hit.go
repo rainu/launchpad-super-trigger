@@ -42,3 +42,11 @@ func IsPadHit(hit launchpad.Hit) bool {
 func IsMetaTextMarker(hit launchpad.Hit) bool {
 	return hit.X == -104 && hit.Y == 8
 }
+
+func IsSpecialVol(hit launchpad.Hit) bool {
+	return IsSpecialHit(hit) && hit.Y == 0
+}
+
+func IsSpecialArm(hit launchpad.Hit) bool {
+	return IsSpecialHit(hit) && hit.Y == 7
+}

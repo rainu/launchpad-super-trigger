@@ -11,6 +11,7 @@ type Lighter interface {
 
 type triggerAreaLighter struct {
 	page     *Page
+	special  *special
 	delegate Lighter
 }
 
@@ -40,7 +41,12 @@ func (t *triggerAreaLighter) Clear() error {
 	}
 
 	//redraw the page lights
-	return t.page.Light(t.delegate)
+	if err := t.page.Light(t.delegate); err != nil {
+		return err
+	}
+
+	//...and special lights
+	return t.special.Light(t.delegate)
 }
 
 type threadSafeLighter struct {

@@ -226,3 +226,25 @@ layout:
     * "r,g" -> **r** is the red value of the color and must be between 0 and 3. **g** is the green value of the color and must be between 0 and 3.
 * *datapoint reference*
     * **sensorName**.**datapointName**
+    
+# Special keys
+
+In the following you can read a description what do the special keys. The special keys are the round keys on the right side. 
+
+## vol
+
+With this key you can switch between the different page navigation modes:
+
+|mode|color|description|
+|---|---|---|
+| Binary mode (default) | off | In this mode only the pressed page key is switched on/off. |
+| Toggle mode | green | In this mode all page keys are switched off except the pressed page key. |
+
+## arm
+
+With this key you can switch between lock modes. 
+
+|mode|color|description|
+|---|---|---|
+| Unlocked (default) | off | In this mode you can touch the pad keys and their underlying action will performed. |
+| Locked | red | In this mode you can only touch the special or page keys. If you touch the pad keys, no action will performed. |
