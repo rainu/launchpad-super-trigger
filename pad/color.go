@@ -1,5 +1,7 @@
 package pad
 
+import "github.com/rainu/launchpad"
+
 var (
 	ColorOff = Color{0, 0}
 
@@ -51,11 +53,11 @@ func (c Color) Light(pad Lighter, x, y int) error {
 	return pad.Light(x, y, c.Green, c.Red)
 }
 
-func (c Color) Text(pad Lighter) ScrollingTextBuilder {
+func (c Color) Text(pad Lighter) launchpad.ScrollingTextBuilder {
 	return pad.Text(c.Green, c.Red)
 }
 
-func (c Color) TextLoop(pad Lighter) ScrollingTextBuilder {
+func (c Color) TextLoop(pad Lighter) launchpad.ScrollingTextBuilder {
 	return pad.TextLoop(c.Green, c.Red)
 }
 

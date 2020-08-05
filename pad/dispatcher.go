@@ -37,7 +37,7 @@ type TriggerDispatcher struct {
 	firstEnterCalled bool
 }
 
-func (t *TriggerDispatcher) Handle(lighter Lighter, page PageNumber, x int, y int) error {
+func (t *TriggerDispatcher) Handle(lighter Lighter, page PageNumber, x, y int) error {
 	if !t.firstEnterCalled {
 		if handler := t.lookupPageHandler(page); handler != nil {
 			if err := handler.OnPageEnter(lighter, page); err != nil {
@@ -123,7 +123,7 @@ func (h handlerId) Id() string {
 	return fmt.Sprintf("%d_%d_%d", h.Number, h.X, h.Y)
 }
 
-func (s *SimpleHandler) OnTrigger(lighter Lighter, page PageNumber, x int, y int) error {
+func (s *SimpleHandler) OnTrigger(lighter Lighter, page PageNumber, x, y int) error {
 	if s.TriggerFn != nil {
 		return s.TriggerFn(lighter, page, x, y)
 	}

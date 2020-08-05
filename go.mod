@@ -8,10 +8,11 @@ require (
 	github.com/itchyny/gojq v0.11.0
 	github.com/leodido/go-urn v1.2.0 // indirect
 	github.com/niemeyer/pretty v0.0.0-20200227124842-a10e7caefd8e // indirect
-	github.com/rakyll/launchpad v0.0.0-20200512213241-400be720e7b7
-	github.com/rakyll/portmidi v0.0.0-20191102002215-74e95e8bc9b1
+	github.com/rainu/launchpad v1.1.0
 	github.com/stretchr/testify v1.5.0
 	github.com/tidwall/gjson v1.6.0
+	gitlab.com/gomidi/midi v1.17.2
+	gitlab.com/gomidi/rtmididrv v0.10.1
 	go.uber.org/zap v1.15.0
 	gopkg.in/check.v1 v1.0.0-20200227125254-8fa46927fb4f // indirect
 	gopkg.in/go-playground/assert.v1 v1.2.1 // indirect

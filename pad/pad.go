@@ -1,11 +1,14 @@
 package pad
 
-import "sync"
+import (
+	"github.com/rainu/launchpad"
+	"sync"
+)
 
 type Lighter interface {
 	Light(x, y, g, r int) error
-	Text(g int, r int) ScrollingTextBuilder
-	TextLoop(g int, r int) ScrollingTextBuilder
+	Text(g, r int) launchpad.ScrollingTextBuilder
+	TextLoop(g, r int) launchpad.ScrollingTextBuilder
 	Clear() error
 }
 
@@ -26,11 +29,11 @@ func (t *triggerAreaLighter) Light(x, y, g, r int) error {
 	return nil
 }
 
-func (t *triggerAreaLighter) Text(g int, r int) ScrollingTextBuilder {
+func (t *triggerAreaLighter) Text(g, r int) launchpad.ScrollingTextBuilder {
 	return t.delegate.Text(g, r)
 }
 
-func (t *triggerAreaLighter) TextLoop(g int, r int) ScrollingTextBuilder {
+func (t *triggerAreaLighter) TextLoop(g, r int) launchpad.ScrollingTextBuilder {
 	return t.delegate.TextLoop(g, r)
 }
 
@@ -56,7 +59,7 @@ type threadSafeLighter struct {
 
 type threadSafeTextBuilder struct {
 	mux      *sync.Mutex
-	delegate ScrollingTextBuilder
+	delegate launchpad.ScrollingTextBuilder
 }
 
 func (t *threadSafeLighter) Light(x, y, g, r int) error {
@@ -66,14 +69,14 @@ func (t *threadSafeLighter) Light(x, y, g, r int) error {
 	return t.delegate.Light(x, y, g, r)
 }
 
-func (t *threadSafeLighter) Text(g int, r int) ScrollingTextBuilder {
+func (t *threadSafeLighter) Text(g, r int) launchpad.ScrollingTextBuilder {
 	return &threadSafeTextBuilder{
 		mux:      &t.mux,
 		delegate: t.delegate.Text(g, r),
 	}
 }
 
-func (t *threadSafeLighter) TextLoop(g int, r int) ScrollingTextBuilder {
+func (t *threadSafeLighter) TextLoop(g, r int) launchpad.ScrollingTextBuilder {
 	return &threadSafeTextBuilder{
 		mux:      &t.mux,
 		delegate: t.delegate.TextLoop(g, r),
@@ -87,7 +90,7 @@ func (t *threadSafeLighter) Clear() error {
 	return t.delegate.Clear()
 }
 
-func (t *threadSafeTextBuilder) Add(speed byte, text string) ScrollingTextBuilder {
+func (t *threadSafeTextBuilder) Add(speed byte, text string) launchpad.ScrollingTextBuilder {
 	return t.delegate.Add(speed, text)
 }
 

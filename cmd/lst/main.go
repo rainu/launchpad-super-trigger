@@ -4,14 +4,13 @@ import (
 	"context"
 	"fmt"
 	"github.com/rainu/launchpad-super-trigger/cmd/lst/config"
-	"github.com/rainu/launchpad-super-trigger/gfx"
 	launchpad "github.com/rainu/launchpad-super-trigger/pad"
+	driver "gitlab.com/gomidi/rtmididrv"
 	"go.uber.org/zap"
 	"os"
 	"os/signal"
 	"sync"
 	"syscall"
-	"time"
 )
 
 func main() {
@@ -34,24 +33,12 @@ func main() {
 		zap.L().Fatal("error while opening setup launchpad configuration: %v", zap.Error(err))
 	}
 
-	dispatcher.AddPageHandler(&launchpad.SimpleHandler{
-		TriggerFn: func(lighter launchpad.Lighter, page launchpad.PageNumber, x int, y int) error {
+	d, err := driver.New()
+	if err != nil {
+		zap.L().Fatal("Unable to load midi driver: %s", zap.Error(err))
+	}
 
-			renderer := gfx.Renderer{lighter}
-			renderer.Boom(x, y, launchpad.ColorHighGreen, 50*time.Millisecond)
-
-			return nil
-		},
-		PageEnterFn: func(lighter launchpad.Lighter, page launchpad.PageNumber) error {
-			renderer := gfx.Renderer{lighter}
-
-			renderer.VerticalProgressbar(0, 75, gfx.AscDirection, launchpad.ColorHighGreen, launchpad.ColorNormalRed)
-
-			return nil
-		},
-	}, 1, 3)
-
-	pad, err := launchpad.NewLaunchpadSuperTrigger(dispatcher.Handle)
+	pad, err := launchpad.NewLaunchpadSuperTrigger(d, dispatcher.Handle)
 	if err != nil {
 		zap.L().Fatal("error while opening connection to launchpad: %v", zap.Error(err))
 	}

@@ -3,41 +3,41 @@ package pad
 import (
 	"context"
 	"fmt"
-	"github.com/rakyll/launchpad"
+	"github.com/rainu/launchpad"
+	"gitlab.com/gomidi/midi"
 	"go.uber.org/zap"
 	"sync"
 )
 
 // TriggerHandleFunc will called each time a hit was made.
-// If the hit was outside the trigger area x and y will be -1!
-type TriggerHandleFunc func(lighter Lighter, page PageNumber, x int, y int) error
+// If the hit was outside the trigger area x and y will be 255!
+type TriggerHandleFunc func(lighter Lighter, page PageNumber, x, y int) error
 
 type LaunchpadSuperTrigger struct {
-	pad         ExtendedLaunchpad
+	pad         launchpad.Launchpad
 	lighter     Lighter
 	currentPage *Page
 	specials    *special
 	handle      TriggerHandleFunc
 }
 
-func NewLaunchpadSuperTrigger(handler TriggerHandleFunc) (*LaunchpadSuperTrigger, error) {
-	pad, err := launchpad.Open()
+func NewLaunchpadSuperTrigger(driver midi.Driver, handler TriggerHandleFunc) (*LaunchpadSuperTrigger, error) {
+	pad, err := launchpad.NewLaunchpad(driver)
 	if err != nil {
 		return nil, err
 	}
-	extendedPad := newExtendedLaunchpad(pad)
 
 	page := NewPage(0)
 	special := newSpecial()
 
 	return &LaunchpadSuperTrigger{
-		pad: extendedPad,
+		pad: pad,
 		lighter: &triggerAreaLighter{
 			page:    page,
 			special: special,
 			delegate: &threadSafeLighter{
 				mux:      sync.Mutex{},
-				delegate: extendedPad,
+				delegate: pad,
 			},
 		},
 		currentPage: page,
@@ -51,22 +51,31 @@ func (l *LaunchpadSuperTrigger) Run(ctx context.Context) {
 		zap.L().Error("Error while clearing the launchpad!", zap.Error(err))
 		return
 	}
-	if err := l.handle(l.lighter, l.currentPage.Number(), -1, -1); err != nil {
+	if err := l.handle(l.lighter, l.currentPage.Number(), 255, 255); err != nil {
 		zap.L().Error("Error while handling hit!", zap.Error(err))
 	}
 
-	hitChannel := l.pad.Listen()
+	hitChannel, err := l.pad.ListenToHits()
+	if err != nil {
+		zap.L().Error("Error while initialise the launchpad hit listener!", zap.Error(err))
+		return
+	}
 
 	for {
 		select {
 		case hit := <-hitChannel:
 			zap.L().Debug(fmt.Sprintf("Incoming hit: { %d; %d }", hit.X, hit.Y))
 
+			//ignore hit releases at the moment
+			if !hit.Down {
+				continue
+			}
+
 			if IsPageHit(hit) {
 				l.applyPage(hit)
 
 				zap.L().Info(fmt.Sprintf("Switched to page: %d", l.currentPage.Number()))
-				if err := l.handle(l.lighter, l.currentPage.Number(), -1, -1); err != nil {
+				if err := l.handle(l.lighter, l.currentPage.Number(), 255, 255); err != nil {
 					zap.L().Error("Error while handling hit!", zap.Error(err))
 				}
 			} else if IsPadHit(hit) {
@@ -78,8 +87,6 @@ func (l *LaunchpadSuperTrigger) Run(ctx context.Context) {
 				if err := l.handle(l.lighter, l.currentPage.Number(), hit.X, hit.Y); err != nil {
 					zap.L().Error("Error while handling hit!", zap.Error(err))
 				}
-			} else if IsMetaTextMarker(hit) {
-				zap.L().Debug("Received a text end marker!")
 			} else if IsSpecialVol(hit) {
 				//change the navigationMode
 				if err := l.specials.SwitchPageNavigationMode(l.pad); err != nil {

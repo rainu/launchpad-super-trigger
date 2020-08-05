@@ -1,6 +1,6 @@
 package pad
 
-import "github.com/rakyll/launchpad"
+import "github.com/rainu/launchpad"
 
 /*
 	Illustrated coordinate system of launchpad:
@@ -37,10 +37,6 @@ func IsSpecialHit(hit launchpad.Hit) bool {
 
 func IsPadHit(hit launchpad.Hit) bool {
 	return hit.X >= 0 && hit.X <= 7 && hit.Y >= 0 && hit.Y <= 7
-}
-
-func IsMetaTextMarker(hit launchpad.Hit) bool {
-	return hit.X == -104 && hit.Y == 8
 }
 
 func IsSpecialVol(hit launchpad.Hit) bool {

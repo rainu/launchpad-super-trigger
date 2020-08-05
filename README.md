@@ -1,19 +1,14 @@
 # launchpad-super-trigger
 Trigger application for the Novation Launchpad S
 
-# Install
-Portmidi is required to use this package.
+# Get the Binary
 
-```bash
-$ apt-get install libportmidi-dev
-# or
-$ brew install portmidi
-# or 
-$ yay -S portmidi
+Before you can build the binary, you have to install the **rtmidi** library on your machine:
+```
+$ apt-get install librtmidi-dev
 ```
 
-# Get the Binary
-You can build it on your own (you will need [golang](https://golang.org/) installed):
+Now you can build it on your own (you will need [golang](https://golang.org/) installed):
 ```bash
 go build -a -installsuffix cgo ./cmd/lst/
 ```
