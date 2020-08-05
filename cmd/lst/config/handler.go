@@ -188,6 +188,8 @@ func (p *pageHandler) OnData(sensor sensor.Sensor) {
 			dpName := dataPoint.Name()
 			extract, err := extractors[dpName].Extract(sensor.LastMessage())
 
+			zap.L().Debug(fmt.Sprintf("Extraction of datapoint %s: %s", dataPoint.Path(), extract))
+
 			if err != nil {
 				zap.L().Warn(fmt.Sprintf("Could not extract datapoint '%s.%s': ", sensorName, dpName), zap.Error(err))
 				continue
