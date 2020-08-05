@@ -11,11 +11,7 @@ type PageNumber string
 var pageNumberRegex = regexp.MustCompile("^[01]{8}$")
 
 func (p PageNumber) isValid() bool {
-	n, err := strconv.ParseInt(string(p), 10, 32)
-	if err != nil {
-		return pageNumberRegex.Match([]byte(p))
-	}
-
+	n := p.AsInt()
 	return n >= 0 && n <= 255
 }
 
