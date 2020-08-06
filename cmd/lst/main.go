@@ -46,7 +46,9 @@ func main() {
 
 	//reacting to signals (interrupt)
 	var signals = make(chan os.Signal, 1)
+	var connectionLost = make(chan bool, 1)
 	defer close(signals)
+	defer close(connectionLost)
 	signal.Notify(signals, os.Interrupt, syscall.SIGTERM)
 
 	ctx, cancelFunc := context.WithCancel(context.Background())
@@ -65,8 +67,18 @@ func main() {
 		pad.Run(ctx)
 	}()
 
-	//wait for interrupt
-	<-signals
+	go func() {
+		pad.WaitForConnectionLost(ctx)
+		connectionLost <- true
+	}()
+
+	//wait for interrupt or connection lost
+	select {
+	case <-signals:
+		zap.L().Info("Interrupt signal received.")
+	case <-connectionLost:
+		zap.L().Info("Connection to Launchpad lost.")
+	}
 
 	cancelFunc()
 	wg.Wait()

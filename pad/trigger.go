@@ -6,7 +6,9 @@ import (
 	"github.com/rainu/launchpad"
 	"gitlab.com/gomidi/midi"
 	"go.uber.org/zap"
+	"strings"
 	"sync"
+	"time"
 )
 
 // TriggerHandleFunc will called each time a hit was made.
@@ -15,6 +17,7 @@ type TriggerHandleFunc func(lighter Lighter, page PageNumber, x, y int) error
 
 type LaunchpadSuperTrigger struct {
 	pad         launchpad.Launchpad
+	driver      midi.Driver
 	lighter     Lighter
 	currentPage *Page
 	specials    *special
@@ -31,7 +34,8 @@ func NewLaunchpadSuperTrigger(driver midi.Driver, handler TriggerHandleFunc) (*L
 	special := newSpecial()
 
 	return &LaunchpadSuperTrigger{
-		pad: pad,
+		pad:    pad,
+		driver: driver,
 		lighter: &triggerAreaLighter{
 			page:    page,
 			special: special,
@@ -44,6 +48,29 @@ func NewLaunchpadSuperTrigger(driver midi.Driver, handler TriggerHandleFunc) (*L
 		specials:    special,
 		handle:      handler,
 	}, nil
+}
+
+func (l *LaunchpadSuperTrigger) WaitForConnectionLost(ctx context.Context) {
+	ticker := time.NewTicker(1 * time.Second)
+outerLoop:
+	for {
+		select {
+		case <-ticker.C:
+			ins, err := l.driver.Ins()
+			if err != nil {
+				return
+			}
+
+			for i := range ins {
+				if strings.Contains(ins[i].String(), "Launchpad S") {
+					continue outerLoop
+				}
+			}
+			return //no launchpad found -> connections lost
+		case <-ctx.Done():
+			return
+		}
+	}
 }
 
 func (l *LaunchpadSuperTrigger) Run(ctx context.Context) {
