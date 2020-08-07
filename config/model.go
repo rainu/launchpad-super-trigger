@@ -35,22 +35,24 @@ type Actors struct {
 }
 
 type RestActor struct {
-	Method   string              `yaml:"method"`
-	URL      string              `yaml:"url" validate:"required,url"`
-	Header   map[string][]string `yaml:"header"`
-	BodyB64  string              `yaml:"bodyBase64" validate:"omitempty,base64"`
-	BodyPath string              `yaml:"bodyPath" validate:"omitempty,file"`
-	BodyRaw  string              `yaml:"body"`
+	Method       string              `yaml:"method"`
+	URL          string              `yaml:"url" validate:"required,url"`
+	Header       map[string][]string `yaml:"header"`
+	BodyB64      string              `yaml:"bodyBase64" validate:"omitempty,base64"`
+	BodyPath     string              `yaml:"bodyPath" validate:"omitempty,file"`
+	BodyRaw      string              `yaml:"body"`
+	BodyTemplate string              `yaml:"bodyTemplate"`
 }
 
 type MQTTActor struct {
-	Connection string `yaml:"connection" validate:"required,connection_mqtt"`
-	Topic      string `yaml:"topic" validate:"required"`
-	QOS        byte   `yaml:"qos" validate:"gte=0,lte=2"`
-	Retained   bool   `yaml:"retained"`
-	BodyB64    string `yaml:"bodyBase64" validate:"omitempty,base64"`
-	BodyPath   string `yaml:"bodyPath" validate:"omitempty,file"`
-	BodyRaw    string `yaml:"body"`
+	Connection   string `yaml:"connection" validate:"required,connection_mqtt"`
+	Topic        string `yaml:"topic" validate:"required"`
+	QOS          byte   `yaml:"qos" validate:"gte=0,lte=2"`
+	Retained     bool   `yaml:"retained"`
+	BodyB64      string `yaml:"bodyBase64" validate:"omitempty,base64"`
+	BodyPath     string `yaml:"bodyPath" validate:"omitempty,file"`
+	BodyRaw      string `yaml:"body"`
+	BodyTemplate string `yaml:"bodyTemplate"`
 }
 
 type ConditionalActor struct {

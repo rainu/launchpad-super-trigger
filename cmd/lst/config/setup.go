@@ -8,6 +8,7 @@ import (
 	"github.com/rainu/launchpad-super-trigger/config"
 	"github.com/rainu/launchpad-super-trigger/pad"
 	"github.com/rainu/launchpad-super-trigger/sensor"
+	"github.com/rainu/launchpad-super-trigger/template"
 	"io"
 	"reflect"
 )
@@ -21,7 +22,8 @@ func ConfigureDispatcher(configReader io.Reader) (*pad.TriggerDispatcher, map[st
 	dispatcher := &pad.TriggerDispatcher{}
 	connections := connection.BuildMqttConnection(parsedConfig)
 	sensors := configSensor.BuildSensors(parsedConfig.Sensors, connections)
-	actors := configActor.BuildActors(parsedConfig, sensors, connections)
+	templateEngine := setupTemplateEngine(sensors)
+	actors := configActor.BuildActors(parsedConfig, sensors, templateEngine, connections)
 
 	for pageNumber, page := range parsedConfig.Layout.Pages {
 		handler := &pageHandler{
@@ -31,7 +33,7 @@ func ConfigureDispatcher(configReader io.Reader) (*pad.TriggerDispatcher, map[st
 		plotters := configPlotter.BuildPlotter(page.Plotter)
 
 		usedSensors := map[string]configSensor.Sensor{}
-		usedSensorNames := UsedSensors(page.Plotter)
+		usedSensorNames := getUsedSensorNames(page.Plotter)
 
 		for _, sensorName := range usedSensorNames {
 			usedSensors[sensorName] = sensors[sensorName]
@@ -49,7 +51,20 @@ func ConfigureDispatcher(configReader io.Reader) (*pad.TriggerDispatcher, map[st
 	return dispatcher, deflatedSensors, nil
 }
 
-func UsedSensors(p config.Plotters) []string {
+func setupTemplateEngine(sensors map[string]configSensor.Sensor) *template.Engine {
+	teSensors := map[string]template.Sensor{}
+
+	for name, sensor := range sensors {
+		teSensors[name] = template.Sensor{
+			Sensor:     sensor.Sensor,
+			Extractors: sensor.Extractors,
+		}
+	}
+
+	return template.NewEngine(teSensors)
+}
+
+func getUsedSensorNames(p config.Plotters) []string {
 	sensors := map[string]bool{}
 
 	refPlotters := reflect.ValueOf(p)

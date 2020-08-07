@@ -61,6 +61,7 @@ layout:
 | actors.rest[*name*].body | - | false | The body content for the http request. |
 | actors.rest[*name*].bodyBase64 | - | false | The body content for the http request encoded in base64. |
 | actors.rest[*name*].bodyPath | - | false | The body file for the http request. |
+| actors.rest[*name*].bodyTemplate | - | false | The *body template* for the http request. |
 | actors.mqtt | - | false | Contains all available mqtt actors. An mqtt actor will send a message to a given topic. |
 | actors.mqtt[*name*].connection | - | false | The name of to mqtt connection which should be used for this mqtt actor. |
 | actors.mqtt[*name*].topic | - | **true** | The topic name. |
@@ -69,6 +70,7 @@ layout:
 | actors.mqtt[*name*].body | - | false | The body content for the mqtt message. |
 | actors.mqtt[*name*].bodyBase64 | - | false | The body content for the mqtt message encoded in base64. |
 | actors.mqtt[*name*].bodyPath | - | false | The body file for the mqtt message. |
+| actors.mqtt[*name*].bodyTemplate | - | false | The *body template* for the mqtt message. |
 | actors.combined | - | false | Contains all available combined actors. An combined actor will call other actors (sequential or in parallel). |
 | actors.combined[*name*].actors | - | **true** | The list of underlying actor names. Must be greater or equal than 2! |
 | actors.combined[*name*].parallel | false | false | How should the underlying actors be called. If true they will be called parallel. Otherwise the will be called sequential. |
@@ -221,6 +223,13 @@ layout:
     * "r,g" -> **r** is the red value of the color and must be between 0 and 3. **g** is the green value of the color and must be between 0 and 3.
 * *datapoint reference*
     * **sensorName**.**datapointName**
+* *body template*
+    * You can define a [go template](https://golang.org/pkg/text/template/) as body content. In this template there are helper functions available:
+        * **.DataPoint "<sensor.datapoint>"**
+    * Example - print the data point **available** from sensor **notebook**:
+        ```
+        {{.DataPoint "notebook.available"}}  
+        ```
     
 # Special keys
 
