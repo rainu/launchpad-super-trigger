@@ -34,6 +34,10 @@ func (e Renderer) horizontalQuadrantProgressbar(y, xFrom, xUntil, percent int, d
 	if err := e.Fill(xFrom, y, xUntil-1, y, empty); err != nil {
 		return err
 	}
+	if percent == 0 {
+		return nil
+	}
+
 	length := xUntil - xFrom
 
 	x0 := xFrom
@@ -79,6 +83,9 @@ func (e Renderer) verticalQuadrantProgressbar(x, yFrom, yUntil, percent int, dir
 
 	if err := e.Fill(x, yFrom-1, x, yUntil, empty); err != nil {
 		return err
+	}
+	if percent == 0 {
+		return nil
 	}
 	length := yUntil - yFrom
 
