@@ -25,6 +25,12 @@ func (e Renderer) HorizontalQuadrantProgressbar(q Quadrant, y, percent int, dir 
 }
 
 func (e Renderer) horizontalQuadrantProgressbar(y, xFrom, xUntil, percent int, dir Direction, fill, empty pad.Color) error {
+	if percent < 0 {
+		percent = 0
+	} else if percent > 100 {
+		percent = 100
+	}
+
 	if err := e.Fill(xFrom, y, xUntil-1, y, empty); err != nil {
 		return err
 	}
@@ -65,6 +71,12 @@ func (e Renderer) VerticalQuadrantProgressbar(q Quadrant, x, percent int, dir Di
 }
 
 func (e Renderer) verticalQuadrantProgressbar(x, yFrom, yUntil, percent int, dir Direction, fill, empty pad.Color) error {
+	if percent < 0 {
+		percent = 0
+	} else if percent > 100 {
+		percent = 100
+	}
+
 	if err := e.Fill(x, yFrom-1, x, yUntil, empty); err != nil {
 		return err
 	}
