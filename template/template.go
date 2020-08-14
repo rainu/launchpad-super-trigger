@@ -35,7 +35,10 @@ func NewEngine(sensors map[string]Sensor) *Engine {
 }
 
 func (e *Engine) RegisterTemplate(name, templateContent string) error {
-	tmpl, err := template.New(name).Parse(templateContent)
+	tmpl, err := template.New(name).
+		Funcs(getGlobalFunctions()).
+		Parse(templateContent)
+
 	if err != nil {
 		return err
 	}
@@ -57,10 +60,14 @@ func (e *Engine) Execute(name string) ([]byte, error) {
 }
 
 func (t *templateData) DataPoint(dpPath string) string {
+	return t.DataPointOr(dpPath, "")
+}
+
+func (t *templateData) DataPointOr(dpPath, defaultValue string) string {
 	split := strings.Split(dpPath, ".")
 	if len(split) != 2 {
 		zap.L().Error("Template: datapoint is invalid!")
-		return ""
+		return defaultValue
 	}
 
 	sensorName := split[0]
@@ -69,19 +76,19 @@ func (t *templateData) DataPoint(dpPath string) string {
 	s, ok := t.sensors[sensorName]
 	if !ok {
 		zap.L().Error("Template: datapoint is invalid! Sensor was not found!")
-		return ""
+		return defaultValue
 	}
 
 	e, ok := s.Extractors[extractorName]
 	if !ok {
 		zap.L().Error(fmt.Sprintf("Template: datapoint is invalid! Datapoint for Sensor %s was not found!", sensorName))
-		return ""
+		return defaultValue
 	}
 
 	extracted, err := e.Extract(s.Sensor.LastMessage())
 	if err != nil {
 		zap.L().Warn("Template: datapoint extraction failed!", zap.Error(err))
-		return ""
+		return defaultValue
 	}
 
 	return string(extracted)

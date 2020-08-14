@@ -226,10 +226,37 @@ layout:
 * *body template*
     * You can define a [go template](https://golang.org/pkg/text/template/) as body content. In this template there are helper functions available:
         * **.DataPoint "<sensor.datapoint>"**
+        * **.DataPointOr "<sensor.datapoint>" "<defaultValue>"**
     * Example - print the data point **available** from sensor **notebook**:
         ```
         {{.DataPoint "notebook.available"}}  
         ```
+    * Example - print the data point **available** from sensor **notebook** or "offline" if no data is available:
+        ```
+        {{.DataPointOr "notebook.available" "offline"}}  
+        ```
+    * The most public functions from go default lib are available: 
+        * [strings](https://golang.org/pkg/strings/)
+            * prefix: **strings_**
+            * example: [ **strings_Count** ](https://golang.org/pkg/strings/#Count)
+        * [math](https://golang.org/pkg/math/)
+            * prefix: **math_**
+            * example: [ **math_Abs** ](https://golang.org/pkg/math/#Abs)
+        * [strconv](https://golang.org/pkg/strconv/)
+            * prefix: **strconv_**
+            * example: [ **strconv_ParseBool** ](https://golang.org/pkg/strconv/#ParseBool)
+        * [rand](https://golang.org/pkg/rand/)
+            * prefix: **rand_**
+            * example: [ **rand_Int63** ](https://golang.org/pkg/rand/#Int63)
+        * [time](https://golang.org/pkg/time/)
+            * prefix: **time_**
+            * example: [ **time_Now** ](https://golang.org/pkg/time/#Now)
+        * [fmt_Sprintf](https://golang.org/pkg/fmt/#Sprintf)
+    * Furthermore there exists functions for basic arithmetic:
+        * **add** - addition
+        * **sub** - subtraction
+        * **mul** - multiplication
+        * **div** - diversion
     
 # Special keys
 
