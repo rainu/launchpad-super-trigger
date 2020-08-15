@@ -1,8 +1,8 @@
 package pad
 
 const (
-	pageNavigationBinary = byte(0)
-	pageNavigationToggle = byte(1)
+	PageNavigationBinary = byte(0)
+	PageNavigationToggle = byte(1)
 )
 
 type special struct {
@@ -12,7 +12,7 @@ type special struct {
 
 func newSpecial() *special {
 	return &special{
-		pageNavigationMode: pageNavigationBinary,
+		pageNavigationMode: PageNavigationBinary,
 		locked:             false,
 	}
 }
@@ -30,18 +30,23 @@ func (s *special) Light(pad Lighter) error {
 	return nil
 }
 
+func (s *special) SetPageNavigationMode(mode byte, pad Lighter) error {
+	s.pageNavigationMode = mode
+	return s.Light(pad)
+}
+
 func (s *special) SwitchPageNavigationMode(pad Lighter) error {
-	if s.pageNavigationMode == pageNavigationBinary {
-		s.pageNavigationMode = pageNavigationToggle
+	if s.pageNavigationMode == PageNavigationBinary {
+		s.pageNavigationMode = PageNavigationToggle
 	} else {
-		s.pageNavigationMode = pageNavigationBinary
+		s.pageNavigationMode = PageNavigationBinary
 	}
 
 	return s.Light(pad)
 }
 
 func (s *special) lightNavigation(pad Lighter) error {
-	if s.pageNavigationMode == pageNavigationBinary {
+	if s.pageNavigationMode == PageNavigationBinary {
 		return ColorOff.Light(pad, 8, 0)
 	} else {
 		return ColorHighGreen.Light(pad, 8, 0)

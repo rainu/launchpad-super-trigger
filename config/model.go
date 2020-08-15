@@ -6,10 +6,16 @@ import (
 )
 
 type Config struct {
+	General     General     `yaml:"general"`
 	Connections Connections `yaml:"connections"`
 	Actors      Actors      `yaml:"actors"`
 	Sensors     Sensors     `yaml:"sensors"`
 	Layout      Layout      `yaml:"layout"`
+}
+
+type General struct {
+	StartPage      PageNumber `yaml:"startPage" validate:"omitempty,pagenumber"`
+	NavigationMode byte       `yaml:"navigationMode" validate:"oneof=0 1"`
 }
 
 type Connections struct {

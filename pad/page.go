@@ -30,6 +30,20 @@ func NewPage(number PageNumber) *Page {
 	return &page
 }
 
+func (p *Page) Goto(number PageNumber, pad Lighter) error {
+	for i := 0; i < 8; i++ {
+		c := ColorOff
+
+		if hasBit(byte(number), i) {
+			c = setColor
+		}
+
+		p.ColorRepresentation[i] = c
+	}
+
+	return p.Light(pad)
+}
+
 // Light will apply the color representation of this page on the launchpad
 func (p *Page) Light(pad Lighter) error {
 	if p != &EmptyPage {

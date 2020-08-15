@@ -13,10 +13,10 @@ import (
 	"reflect"
 )
 
-func ConfigureDispatcher(configReader io.Reader) (*pad.TriggerDispatcher, map[string]sensor.Sensor, error) {
+func ConfigureDispatcher(configReader io.Reader) (*pad.TriggerDispatcher, map[string]sensor.Sensor, config.General, error) {
 	parsedConfig, err := config.ReadConfig(configReader)
 	if err != nil {
-		return nil, nil, err
+		return nil, nil, config.General{}, err
 	}
 
 	dispatcher := &pad.TriggerDispatcher{}
@@ -48,7 +48,7 @@ func ConfigureDispatcher(configReader io.Reader) (*pad.TriggerDispatcher, map[st
 		deflatedSensors[name] = s.Sensor
 	}
 
-	return dispatcher, deflatedSensors, nil
+	return dispatcher, deflatedSensors, parsedConfig.General, nil
 }
 
 func setupTemplateEngine(sensors map[string]configSensor.Sensor) *template.Engine {

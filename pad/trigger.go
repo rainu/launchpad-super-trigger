@@ -50,6 +50,22 @@ func NewLaunchpadSuperTrigger(driver midi.Driver, handler TriggerHandleFunc) (*L
 	}, nil
 }
 
+func (l *LaunchpadSuperTrigger) Initialise(startPage int, navigationMode byte) error {
+	if err := l.pad.Clear(); err != nil {
+		return err
+	}
+
+	if err := l.currentPage.Goto(PageNumber(startPage), l.pad); err != nil {
+		return err
+	}
+
+	if err := l.specials.SetPageNavigationMode(navigationMode, l.pad); err != nil {
+		return err
+	}
+
+	return nil
+}
+
 func (l *LaunchpadSuperTrigger) WaitForConnectionLost(ctx context.Context) {
 	ticker := time.NewTicker(1 * time.Second)
 outerLoop:
@@ -74,10 +90,6 @@ outerLoop:
 }
 
 func (l *LaunchpadSuperTrigger) Run(ctx context.Context) {
-	if err := l.pad.Clear(); err != nil {
-		zap.L().Error("Error while clearing the launchpad!", zap.Error(err))
-		return
-	}
 	if err := l.handle(l.lighter, l.currentPage.Number(), 255, 255); err != nil {
 		zap.L().Error("Error while handling hit!", zap.Error(err))
 	}
@@ -141,9 +153,9 @@ func (l *LaunchpadSuperTrigger) Run(ctx context.Context) {
 
 func (l *LaunchpadSuperTrigger) applyPage(hit launchpad.Hit) {
 	switch l.specials.pageNavigationMode {
-	case pageNavigationBinary:
+	case PageNavigationBinary:
 		l.currentPage.Toggle(hit.X)
-	case pageNavigationToggle:
+	case PageNavigationToggle:
 		l.currentPage.SetTo(hit.X)
 	}
 }

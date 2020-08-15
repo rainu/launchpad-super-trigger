@@ -49,6 +49,9 @@ layout:
 
 | config key | default | mandatory | description |
 |---|---|---|---|
+| general | - | false | Contains all general settings. |
+| general.startPage | 0 | false | The page which should active when the application starts. |
+| general.navigationMode | 0 | false | The page navigation mode: 0 => binary mode; 1 => toggle mode |
 | actors | - | false | Contains all available actors. |
 | actors.command | - | false | Contains all available command actors. A command actor will runs a command on the local machine. |
 | actors.command[*name*].name | - | **true** | The name/path of the command to execute. |

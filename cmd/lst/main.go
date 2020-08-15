@@ -28,7 +28,7 @@ func main() {
 		zap.L().Fatal("error while read configuration: %v", zap.Error(err))
 	}
 
-	dispatcher, sensors, err := config.ConfigureDispatcher(configFile)
+	dispatcher, sensors, generalSettings, err := config.ConfigureDispatcher(configFile)
 	if err != nil {
 		zap.L().Fatal("error while opening setup launchpad configuration: %v", zap.Error(err))
 	}
@@ -43,6 +43,14 @@ func main() {
 		zap.L().Fatal("error while opening connection to launchpad: %v", zap.Error(err))
 	}
 	defer pad.Close()
+
+	err = pad.Initialise(
+		generalSettings.StartPage.AsInt(),
+		generalSettings.NavigationMode,
+	)
+	if err != nil {
+		zap.L().Fatal("error while initialize launchpad: %v", zap.Error(err))
+	}
 
 	//reacting to signals (interrupt)
 	var signals = make(chan os.Signal, 1)

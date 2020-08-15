@@ -19,14 +19,14 @@ func (p PageNumber) AsInt() int {
 	if pageNumberRegex.Match([]byte(p)) {
 		n, err := strconv.ParseInt(p.reverse(), 2, 32)
 		if err != nil {
-			return -1
+			return 0
 		}
 		return int(n)
 	}
 
 	n, err := strconv.ParseInt(string(p), 10, 32)
 	if err != nil {
-		return -1
+		return 0
 	}
 	return int(n)
 }
