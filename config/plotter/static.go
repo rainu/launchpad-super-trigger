@@ -1,8 +1,8 @@
 package plotter
 
 import (
-	"github.com/rainu/launchpad-super-trigger/cmd/lst/config/expressions"
 	"github.com/rainu/launchpad-super-trigger/config"
+	"github.com/rainu/launchpad-super-trigger/config/expressions"
 	"github.com/rainu/launchpad-super-trigger/pad"
 	"github.com/rainu/launchpad-super-trigger/plotter"
 )

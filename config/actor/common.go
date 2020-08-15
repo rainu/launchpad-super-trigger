@@ -3,8 +3,8 @@ package actor
 import (
 	MQTT "github.com/eclipse/paho.mqtt.golang"
 	"github.com/rainu/launchpad-super-trigger/actor"
-	"github.com/rainu/launchpad-super-trigger/cmd/lst/config/sensor"
 	"github.com/rainu/launchpad-super-trigger/config"
+	"github.com/rainu/launchpad-super-trigger/config/sensor"
 	"github.com/rainu/launchpad-super-trigger/template"
 )
 

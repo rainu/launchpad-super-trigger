@@ -2,9 +2,9 @@ package actor
 
 import (
 	"github.com/rainu/launchpad-super-trigger/actor"
-	"github.com/rainu/launchpad-super-trigger/cmd/lst/config/expressions"
-	configSensor "github.com/rainu/launchpad-super-trigger/cmd/lst/config/sensor"
 	"github.com/rainu/launchpad-super-trigger/config"
+	"github.com/rainu/launchpad-super-trigger/config/expressions"
+	configSensor "github.com/rainu/launchpad-super-trigger/config/sensor"
 	"github.com/rainu/launchpad-super-trigger/sensor"
 	"github.com/rainu/launchpad-super-trigger/sensor/data_extractor"
 )

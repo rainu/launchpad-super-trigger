@@ -1,11 +1,11 @@
 package config
 
 import (
-	configActor "github.com/rainu/launchpad-super-trigger/cmd/lst/config/actor"
-	"github.com/rainu/launchpad-super-trigger/cmd/lst/config/connection"
-	configPlotter "github.com/rainu/launchpad-super-trigger/cmd/lst/config/plotter"
-	configSensor "github.com/rainu/launchpad-super-trigger/cmd/lst/config/sensor"
 	"github.com/rainu/launchpad-super-trigger/config"
+	configActor "github.com/rainu/launchpad-super-trigger/config/actor"
+	"github.com/rainu/launchpad-super-trigger/config/connection"
+	configPlotter "github.com/rainu/launchpad-super-trigger/config/plotter"
+	configSensor "github.com/rainu/launchpad-super-trigger/config/sensor"
 	"github.com/rainu/launchpad-super-trigger/pad"
 	"github.com/rainu/launchpad-super-trigger/sensor"
 	"github.com/rainu/launchpad-super-trigger/template"
