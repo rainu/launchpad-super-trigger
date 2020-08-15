@@ -3,6 +3,7 @@ module github.com/rainu/launchpad-super-trigger
 go 1.14
 
 require (
+	github.com/boltdb/bolt v1.3.1
 	github.com/eclipse/paho.mqtt.golang v1.2.0
 	github.com/go-playground/universal-translator v0.17.0 // indirect
 	github.com/itchyny/gojq v0.11.0

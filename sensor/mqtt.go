@@ -4,20 +4,19 @@ import (
 	"context"
 	"fmt"
 	mqtt "github.com/eclipse/paho.mqtt.golang"
+	"github.com/rainu/launchpad-super-trigger/sensor/store"
 	"go.uber.org/zap"
-	"sync"
 )
 
 type MQTT struct {
 	callbackHandler
 
-	Client mqtt.Client
-	Topic  string
-	QOS    byte
+	Client       mqtt.Client
+	Topic        string
+	QOS          byte
+	MessageStore store.Store
 
-	running     bool
-	mux         sync.RWMutex
-	lastMessage []byte
+	running bool
 }
 
 func (m *MQTT) Run(ctx context.Context) error {
@@ -35,19 +34,21 @@ func (m *MQTT) Run(ctx context.Context) error {
 }
 
 func (m *MQTT) LastMessage() []byte {
-	m.mux.RLock()
-	defer m.mux.RUnlock()
+	data, err := m.MessageStore.Get()
+	if err != nil {
+		zap.L().Error("Could not get message from message store!", zap.Error(err))
+		return nil
+	}
 
-	return m.lastMessage
+	return data
 }
 
 func (m *MQTT) handleMessage(client mqtt.Client, message mqtt.Message) {
 	zap.L().Debug(fmt.Sprintf("Mqtt message received: %s", message.Topic()))
 	message.Ack()
 
-	m.mux.Lock()
-	m.lastMessage = message.Payload()
-	m.mux.Unlock()
-
+	if err := m.MessageStore.Set(message.Payload()); err != nil {
+		zap.L().Error("Could not save message into message store!", zap.Error(err))
+	}
 	m.callbackHandler.Call(m)
 }

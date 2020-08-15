@@ -14,8 +14,10 @@ type Config struct {
 }
 
 type General struct {
-	StartPage      PageNumber `yaml:"startPage" validate:"omitempty,pagenumber"`
-	NavigationMode byte       `yaml:"navigationMode" validate:"oneof=0 1"`
+	StartPage          PageNumber `yaml:"startPage" validate:"omitempty,pagenumber"`
+	NavigationMode     byte       `yaml:"navigationMode" validate:"oneof=0 1"`
+	SensorStore        string     `yaml:"sensorStore"`
+	CompressSensorData bool       `yaml:"compressSensorData"`
 }
 
 type Connections struct {

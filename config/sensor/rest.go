@@ -10,14 +10,15 @@ import (
 	"strings"
 )
 
-func buildRestSensors(sensors map[string]Sensor, restSensors map[string]config.RestSensor) {
+func buildRestSensors(sensors map[string]Sensor, generalSettings config.General, restSensors map[string]config.RestSensor) {
 	for sensorName, restSensor := range restSensors {
 		s := &sensor.Rest{
-			HttpClient: http.DefaultClient,
-			Method:     restSensor.Method,
-			Url:        restSensor.URL,
-			Header:     restSensor.Header,
-			Interval:   restSensor.Interval,
+			HttpClient:   http.DefaultClient,
+			Method:       restSensor.Method,
+			Url:          restSensor.URL,
+			Header:       restSensor.Header,
+			Interval:     restSensor.Interval,
+			MessageStore: generateStore(generalSettings, sensorName),
 		}
 
 		if restSensor.BodyRaw != "" {

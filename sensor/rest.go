@@ -3,27 +3,26 @@ package sensor
 import (
 	"context"
 	"fmt"
+	"github.com/rainu/launchpad-super-trigger/sensor/store"
 	"go.uber.org/zap"
 	"io"
 	"io/ioutil"
 	"net/http"
-	"sync"
 	"time"
 )
 
 type Rest struct {
 	callbackHandler
 
-	HttpClient *http.Client
-	Method     string
-	Url        string
-	Header     map[string][]string
-	Body       func() io.Reader
-	Interval   time.Duration
+	HttpClient   *http.Client
+	Method       string
+	Url          string
+	Header       map[string][]string
+	Body         func() io.Reader
+	Interval     time.Duration
+	MessageStore store.Store
 
-	running     bool
-	mux         sync.RWMutex
-	lastMessage []byte
+	running bool
 }
 
 func (r *Rest) Run(ctx context.Context) error {
@@ -92,17 +91,20 @@ func (r *Rest) call(ctx context.Context) error {
 		return err
 	}
 
-	r.mux.Lock()
-	r.lastMessage = rawBody
-	r.mux.Unlock()
+	if err := r.MessageStore.Set(rawBody); err != nil {
+		zap.L().Error("Could not save message into message store!", zap.Error(err))
+	}
 
 	r.callbackHandler.Call(r)
 	return nil
 }
 
 func (r *Rest) LastMessage() []byte {
-	r.mux.RLock()
-	defer r.mux.RUnlock()
+	data, err := r.MessageStore.Get()
+	if err != nil {
+		zap.L().Error("Could not get message from message store!", zap.Error(err))
+		return nil
+	}
 
-	return r.lastMessage
+	return data
 }

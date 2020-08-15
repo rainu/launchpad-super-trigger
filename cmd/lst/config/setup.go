@@ -21,7 +21,7 @@ func ConfigureDispatcher(configReader io.Reader) (*pad.TriggerDispatcher, map[st
 
 	dispatcher := &pad.TriggerDispatcher{}
 	connections := connection.BuildMqttConnection(parsedConfig)
-	sensors := configSensor.BuildSensors(parsedConfig.Sensors, connections)
+	sensors := configSensor.BuildSensors(parsedConfig.General, parsedConfig.Sensors, connections)
 	templateEngine := setupTemplateEngine(sensors)
 	actors := configActor.BuildActors(parsedConfig, sensors, templateEngine, connections)
 

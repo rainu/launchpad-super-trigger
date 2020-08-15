@@ -52,6 +52,8 @@ layout:
 | general | - | false | Contains all general settings. |
 | general.startPage | 0 | false | The page which should active when the application starts. |
 | general.navigationMode | 0 | false | The page navigation mode: 0 => binary mode; 1 => toggle mode |
+| general.sensorStore | - | false | If the sensor data should be persisted, here you can set the file path to the [bolt-db](https://github.com/boltdb/bolt). Otherwise the sensor date will only keep in memory. |
+| general.compressSensorData | false | false | Should the received sensor data be (gzip) compressed? This will work with all store types (memory or bolt). |
 | actors | - | false | Contains all available actors. |
 | actors.command | - | false | Contains all available command actors. A command actor will runs a command on the local machine. |
 | actors.command[*name*].name | - | **true** | The name/path of the command to execute. |

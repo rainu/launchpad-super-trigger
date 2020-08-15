@@ -3,22 +3,21 @@ package sensor
 import (
 	"context"
 	"fmt"
+	"github.com/rainu/launchpad-super-trigger/sensor/store"
 	"go.uber.org/zap"
 	"os/exec"
-	"sync"
 	"time"
 )
 
 type Command struct {
 	callbackHandler
 
-	Name      string
-	Arguments []string
-	Interval  time.Duration
+	Name         string
+	Arguments    []string
+	Interval     time.Duration
+	MessageStore store.Store
 
-	running     bool
-	mux         sync.RWMutex
-	lastMessage []byte
+	running bool
 }
 
 func (c *Command) Run(ctx context.Context) error {
@@ -58,17 +57,20 @@ func (c *Command) call(ctx context.Context) error {
 	out, execErr := command.CombinedOutput()
 	zap.L().Info("Command call was successful!")
 
-	c.mux.Lock()
-	c.lastMessage = out
-	c.mux.Unlock()
+	if err := c.MessageStore.Set(out); err != nil {
+		zap.L().Error("Could not save message into message store!", zap.Error(err))
+	}
 
 	c.callbackHandler.Call(c)
 	return execErr
 }
 
 func (c *Command) LastMessage() []byte {
-	c.mux.RLock()
-	defer c.mux.RUnlock()
+	data, err := c.MessageStore.Get()
+	if err != nil {
+		zap.L().Error("Could not get message from message store!", zap.Error(err))
+		return nil
+	}
 
-	return c.lastMessage
+	return data
 }
