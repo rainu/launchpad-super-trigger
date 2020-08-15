@@ -40,16 +40,23 @@ func (e Renderer) horizontalQuadrantProgressbar(y, xFrom, xUntil, percent int, d
 
 	length := xUntil - xFrom
 
-	x0 := xFrom
-	x1 := xFrom + ((length * percent) / 100) - 1
+	var x0, x1 int
+	if dir == AscDirection {
+		x0 = xFrom
+		p := (length * percent) / 100
+		x1 = x0 + p
 
-	if x1 < 0 {
-		return nil
-	}
-
-	if dir == DescDirection {
+		if x1 > maxX {
+			return nil
+		}
+	} else {
 		x0 = xUntil - 1
-		x1 = xUntil - ((length * percent) / 100)
+		p := (length * percent) / 100
+		x1 = x0 - p
+
+		if x1 < minY {
+			return nil
+		}
 	}
 
 	return e.Fill(x0, y, x1, y, fill)
@@ -62,13 +69,13 @@ func (e Renderer) VerticalProgressbar(x, percent int, dir Direction, fill, empty
 func (e Renderer) VerticalQuadrantProgressbar(q Quadrant, x, percent int, dir Direction, fill, empty pad.Color) error {
 	switch q {
 	case FirstQuadrant:
-		return e.verticalQuadrantProgressbar(x+4, 4, minY, percent, dir, fill, empty)
+		return e.verticalQuadrantProgressbar(x+4, minY, 4, percent, dir, fill, empty)
 	case SecondQuadrant:
-		return e.verticalQuadrantProgressbar(x, 4, minY, percent, dir, fill, empty)
+		return e.verticalQuadrantProgressbar(x, minY, 4, percent, dir, fill, empty)
 	case ThirdQuadrant:
-		return e.verticalQuadrantProgressbar(x, padHeight, 4, percent, dir, fill, empty)
+		return e.verticalQuadrantProgressbar(x, 4, padHeight, percent, dir, fill, empty)
 	case ForthQuadrant:
-		return e.verticalQuadrantProgressbar(x+4, padHeight, 4, percent, dir, fill, empty)
+		return e.verticalQuadrantProgressbar(x+4, 4, padHeight, percent, dir, fill, empty)
 	default:
 		return errors.New("invalid quadrant")
 	}
@@ -81,7 +88,7 @@ func (e Renderer) verticalQuadrantProgressbar(x, yFrom, yUntil, percent int, dir
 		percent = 100
 	}
 
-	if err := e.Fill(x, yFrom-1, x, yUntil, empty); err != nil {
+	if err := e.Fill(x, yFrom, x, yUntil-1, empty); err != nil {
 		return err
 	}
 	if percent == 0 {
@@ -89,16 +96,23 @@ func (e Renderer) verticalQuadrantProgressbar(x, yFrom, yUntil, percent int, dir
 	}
 	length := yUntil - yFrom
 
-	y0 := yFrom - 1
-	y1 := yFrom + ((length * percent) / 100)
+	var y0, y1 int
+	if dir == AscDirection {
+		y0 = yUntil - 1
+		p := (length * percent) / 100
+		y1 = y0 - p
 
-	if y1 > maxY {
-		return nil
-	}
+		if y1 < minY {
+			return nil
+		}
+	} else {
+		y0 = yFrom
+		p := (length * percent) / 100
+		y1 = yFrom + p
 
-	if dir == DescDirection {
-		y0 = yUntil
-		y1 = yUntil - ((length * percent) / 100) - 1
+		if y1 > maxY {
+			return nil
+		}
 	}
 
 	return e.Fill(x, y0, x, y1, fill)
