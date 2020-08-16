@@ -39,6 +39,9 @@ func (e Renderer) horizontalQuadrantProgressbar(y, xFrom, xUntil, percent int, d
 	}
 
 	length := xUntil - xFrom
+	if length < 0 {
+		length *= -1
+	}
 
 	var x0, x1 int
 	if dir == AscDirection {
@@ -63,7 +66,7 @@ func (e Renderer) horizontalQuadrantProgressbar(y, xFrom, xUntil, percent int, d
 }
 
 func (e Renderer) VerticalProgressbar(x, percent int, dir Direction, fill, empty pad.Color) error {
-	return e.verticalQuadrantProgressbar(x, padHeight, minY, percent, dir, fill, empty)
+	return e.verticalQuadrantProgressbar(x, minY, padHeight, percent, dir, fill, empty)
 }
 
 func (e Renderer) VerticalQuadrantProgressbar(q Quadrant, x, percent int, dir Direction, fill, empty pad.Color) error {
@@ -95,6 +98,9 @@ func (e Renderer) verticalQuadrantProgressbar(x, yFrom, yUntil, percent int, dir
 		return nil
 	}
 	length := yUntil - yFrom
+	if length < 0 {
+		length *= -1
+	}
 
 	var y0, y1 int
 	if dir == AscDirection {
