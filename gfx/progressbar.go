@@ -31,38 +31,25 @@ func (e Renderer) horizontalQuadrantProgressbar(y, xFrom, xUntil, percent int, d
 		percent = 100
 	}
 
-	if err := e.Fill(xFrom, y, xUntil-1, y, empty); err != nil {
-		return err
-	}
-	if percent == 0 {
-		return nil
-	}
-
 	length := xUntil - xFrom
-	if length < 0 {
-		length *= -1
-	}
+	p := (length * percent) / 100
+	pixel := make([]FramePixel, 0, length)
 
-	var x0, x1 int
 	if dir == AscDirection {
-		x0 = xFrom
-		p := (length * percent) / 100
-		x1 = x0 + p
-
-		if x1 > maxX {
-			return nil
+		for x := xFrom; x < xUntil; x++ {
+			pixel = append(pixel, FramePixel{X: x, Y: y, Color: empty})
 		}
 	} else {
-		x0 = xUntil - 1
-		p := (length * percent) / 100
-		x1 = x0 - p
-
-		if x1 < minY {
-			return nil
+		for x := xUntil - 1; x >= xFrom; x-- {
+			pixel = append(pixel, FramePixel{X: x, Y: y, Color: empty})
 		}
 	}
 
-	return e.Fill(x0, y, x1, y, fill)
+	for i := 0; i < p && i < len(pixel); i++ {
+		pixel[i].Color = fill
+	}
+
+	return e.Pattern(pixel...)
 }
 
 func (e Renderer) VerticalProgressbar(x, percent int, dir Direction, fill, empty pad.Color) error {
@@ -91,35 +78,23 @@ func (e Renderer) verticalQuadrantProgressbar(x, yFrom, yUntil, percent int, dir
 		percent = 100
 	}
 
-	if err := e.Fill(x, yFrom, x, yUntil-1, empty); err != nil {
-		return err
-	}
-	if percent == 0 {
-		return nil
-	}
 	length := yUntil - yFrom
-	if length < 0 {
-		length *= -1
-	}
+	p := (length * percent) / 100
+	pixel := make([]FramePixel, 0, length)
 
-	var y0, y1 int
 	if dir == AscDirection {
-		y0 = yUntil - 1
-		p := (length * percent) / 100
-		y1 = y0 - p
-
-		if y1 < minY {
-			return nil
+		for y := yUntil - 1; y >= yFrom; y-- {
+			pixel = append(pixel, FramePixel{X: x, Y: y, Color: empty})
 		}
 	} else {
-		y0 = yFrom
-		p := (length * percent) / 100
-		y1 = yFrom + p
-
-		if y1 > maxY {
-			return nil
+		for y := yFrom; y < yUntil; y++ {
+			pixel = append(pixel, FramePixel{X: x, Y: y, Color: empty})
 		}
 	}
 
-	return e.Fill(x, y0, x, y1, fill)
+	for i := 0; i < p && i < len(pixel); i++ {
+		pixel[i].Color = fill
+	}
+
+	return e.Pattern(pixel...)
 }
