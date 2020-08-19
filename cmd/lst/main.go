@@ -4,9 +4,13 @@ import (
 	"context"
 	"fmt"
 	"github.com/rainu/launchpad-super-trigger/cmd/lst/config"
+	triggerConf "github.com/rainu/launchpad-super-trigger/config"
 	launchpad "github.com/rainu/launchpad-super-trigger/pad"
+	"github.com/rainu/launchpad-super-trigger/sensor"
 	driver "gitlab.com/gomidi/rtmididrv"
 	"go.uber.org/zap"
+	"io"
+	"io/ioutil"
 	"os"
 	"os/signal"
 	"sync"
@@ -23,15 +27,7 @@ func main() {
 	zap.ReplaceGlobals(logger)
 	defer zap.L().Sync()
 
-	configFile, err := os.Open(*Args.ConfigFile)
-	if err != nil {
-		zap.L().Fatal("error while read configuration: %v", zap.Error(err))
-	}
-
-	dispatcher, sensors, generalSettings, err := config.ConfigureDispatcher(configFile)
-	if err != nil {
-		zap.L().Fatal("error while opening setup launchpad configuration: %v", zap.Error(err))
-	}
+	dispatcher, sensors, generalSettings := initialiseConfig()
 
 	d, err := driver.New()
 	if err != nil {
@@ -90,4 +86,57 @@ func main() {
 
 	cancelFunc()
 	wg.Wait()
+}
+
+func initialiseConfig() (*launchpad.TriggerDispatcher, map[string]sensor.Sensor, triggerConf.General) {
+	info, err := os.Stat(*Args.ConfigPath)
+	if os.IsNotExist(err) {
+		zap.L().Fatal("Config file or directory not found!")
+	}
+
+	var files []*os.File
+
+	if info.IsDir() {
+		dir, err := ioutil.ReadDir(*Args.ConfigPath)
+		if err != nil {
+			zap.L().Fatal("could not read config directory: %v", zap.Error(err))
+		}
+		files = make([]*os.File, 0, len(dir))
+
+		for _, fileInfo := range dir {
+			if !fileInfo.IsDir() {
+				configFile, err := os.Open(fmt.Sprintf("%s/%s", *Args.ConfigPath, fileInfo.Name()))
+				if err != nil {
+					zap.L().Fatal("error while read configuration: %v", zap.Error(err))
+				}
+
+				files = append(files, configFile)
+			}
+		}
+	} else {
+		configFile, err := os.Open(*Args.ConfigPath)
+		if err != nil {
+			zap.L().Fatal("error while read configuration: %v", zap.Error(err))
+		}
+
+		files = []*os.File{configFile}
+	}
+	defer func() {
+		//close all config files
+		for _, file := range files {
+			file.Close()
+		}
+	}()
+
+	reader := make([]io.Reader, 0, len(files))
+	for _, file := range files {
+		reader = append(reader, file)
+	}
+
+	dispatcher, sensors, generalSettings, err := config.ConfigureDispatcher(reader...)
+	if err != nil {
+		zap.L().Fatal("error while opening setup launchpad configuration: %v", zap.Error(err))
+	}
+
+	return dispatcher, sensors, generalSettings
 }

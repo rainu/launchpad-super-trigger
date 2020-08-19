@@ -13,8 +13,8 @@ import (
 	"reflect"
 )
 
-func ConfigureDispatcher(configReader io.Reader) (*pad.TriggerDispatcher, map[string]sensor.Sensor, config.General, error) {
-	parsedConfig, err := config.ReadConfig(configReader)
+func ConfigureDispatcher(configReader ...io.Reader) (*pad.TriggerDispatcher, map[string]sensor.Sensor, config.General, error) {
+	parsedConfig, err := config.ReadConfig(configReader...)
 	if err != nil {
 		return nil, nil, config.General{}, err
 	}

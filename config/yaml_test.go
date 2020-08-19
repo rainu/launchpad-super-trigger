@@ -241,7 +241,7 @@ actors:
 			conditions:
 				- actor: test
 				  datapoint: test.test
-				  expressions:
+				  expression:
 				    eq: ""`,
 			Config{
 				Connections: Connections{
@@ -471,8 +471,8 @@ layout:
 					},
 				},
 				Layout: Layout{
-					Pages: map[int]Page{
-						0: {
+					Pages: map[PageNumber]Page{
+						PageNumber(0): {
 							Trigger: map[Coordinates]Trigger{
 								"1,2": {
 									Actor: "test",

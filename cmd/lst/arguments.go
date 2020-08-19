@@ -6,18 +6,18 @@ import (
 )
 
 type applicationArgs struct {
-	ConfigFile *string
+	ConfigPath *string
 }
 
 var Args applicationArgs
 
 func LoadArgs() {
 	Args = applicationArgs{
-		ConfigFile: flag.String("config", "./config.yaml", "The configuration file"),
+		ConfigPath: flag.String("config", "./config.yaml", "The configuration file/directory"),
 	}
 	flag.Parse()
 
-	if *Args.ConfigFile == "" {
-		zap.L().Fatal("Topic configuration file is missing!")
+	if *Args.ConfigPath == "" {
+		zap.L().Fatal("Topic configuration file/directory is missing!")
 	}
 }
