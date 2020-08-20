@@ -1,14 +1,14 @@
 package actor
 
 import (
-	MQTT "github.com/eclipse/paho.mqtt.golang"
 	"github.com/rainu/launchpad-super-trigger/actor"
 	"github.com/rainu/launchpad-super-trigger/config"
+	"github.com/rainu/launchpad-super-trigger/config/connection/mqtt"
 	"github.com/rainu/launchpad-super-trigger/template"
 	"go.uber.org/zap"
 )
 
-func buildMqtt(actors map[string]actor.Actor, mqttActors map[string]config.MQTTActor, mqttConnections map[string]MQTT.Client, engine *template.Engine) {
+func buildMqtt(actors map[string]actor.Actor, mqttActors map[string]config.MQTTActor, mqttConnections map[string]mqtt.Client, engine *template.Engine) {
 	for actorName, mqttActor := range mqttActors {
 		handler := &actor.Mqtt{
 			Client:   mqttConnections[mqttActor.Connection],

@@ -3,12 +3,13 @@ package config
 import (
 	"github.com/rainu/launchpad-super-trigger/config"
 	configActor "github.com/rainu/launchpad-super-trigger/config/actor"
-	"github.com/rainu/launchpad-super-trigger/config/connection"
+	connectionMqtt "github.com/rainu/launchpad-super-trigger/config/connection/mqtt"
 	configPlotter "github.com/rainu/launchpad-super-trigger/config/plotter"
 	configSensor "github.com/rainu/launchpad-super-trigger/config/sensor"
 	"github.com/rainu/launchpad-super-trigger/pad"
 	"github.com/rainu/launchpad-super-trigger/sensor"
 	"github.com/rainu/launchpad-super-trigger/template"
+	"go.uber.org/zap"
 	"io"
 	"reflect"
 )
@@ -20,10 +21,17 @@ func ConfigureDispatcher(configReader ...io.Reader) (*pad.TriggerDispatcher, map
 	}
 
 	dispatcher := &pad.TriggerDispatcher{}
-	connections := connection.BuildMqttConnection(parsedConfig)
+	connections := connectionMqtt.BuildMqttConnection(parsedConfig)
 	sensors := configSensor.BuildSensors(parsedConfig.General, parsedConfig.Sensors, connections)
 	templateEngine := setupTemplateEngine(sensors)
 	actors := configActor.BuildActors(parsedConfig, sensors, templateEngine, connections)
+
+	//establish mqtt connections after callbacks were registered
+	for _, connection := range connections {
+		if token := connection.Connect(); token.Wait() && token.Error() != nil {
+			zap.L().Fatal("Error while connecting to mqtt broker: %s", zap.Error(token.Error()))
+		}
+	}
 
 	for pageNumber, page := range parsedConfig.Layout.Pages {
 		handler := &pageHandler{

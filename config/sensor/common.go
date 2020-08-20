@@ -3,8 +3,8 @@ package sensor
 import (
 	"fmt"
 	"github.com/boltdb/bolt"
-	MQTT "github.com/eclipse/paho.mqtt.golang"
 	"github.com/rainu/launchpad-super-trigger/config"
+	"github.com/rainu/launchpad-super-trigger/config/connection/mqtt"
 	"github.com/rainu/launchpad-super-trigger/sensor"
 	"github.com/rainu/launchpad-super-trigger/sensor/data_extractor"
 	"github.com/rainu/launchpad-super-trigger/sensor/store"
@@ -40,7 +40,7 @@ func (d *DataObserver) RemoveListener(dl DataListener) {
 	delete(d.listener, dl)
 }
 
-func BuildSensors(generalSettings config.General, sensors config.Sensors, mqttConnections map[string]MQTT.Client) map[string]Sensor {
+func BuildSensors(generalSettings config.General, sensors config.Sensors, mqttConnections map[string]mqtt.Client) map[string]Sensor {
 	result := map[string]Sensor{}
 
 	buildMqttSensors(result, generalSettings, sensors.Mqtt, mqttConnections)

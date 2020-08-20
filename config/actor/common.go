@@ -1,14 +1,14 @@
 package actor
 
 import (
-	MQTT "github.com/eclipse/paho.mqtt.golang"
 	"github.com/rainu/launchpad-super-trigger/actor"
 	"github.com/rainu/launchpad-super-trigger/config"
+	"github.com/rainu/launchpad-super-trigger/config/connection/mqtt"
 	"github.com/rainu/launchpad-super-trigger/config/sensor"
 	"github.com/rainu/launchpad-super-trigger/template"
 )
 
-func BuildActors(parsedConfig *config.Config, sensors map[string]sensor.Sensor, templateEngine *template.Engine, mqttConnections map[string]MQTT.Client) map[string]actor.Actor {
+func BuildActors(parsedConfig *config.Config, sensors map[string]sensor.Sensor, templateEngine *template.Engine, mqttConnections map[string]mqtt.Client) map[string]actor.Actor {
 	handler := map[string]actor.Actor{}
 
 	buildRest(handler, parsedConfig.Actors.Rest, templateEngine)

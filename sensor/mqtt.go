@@ -33,6 +33,20 @@ func (m *MQTT) Run(ctx context.Context) error {
 	return nil
 }
 
+// after the mqtt connection is reestablished, you have to call this function
+func (m *MQTT) Reinitialise() {
+	if m.running {
+		m.Client.Subscribe(m.Topic, m.QOS, m.handleMessage)
+	}
+}
+
+// when the mqtt connection is lost, you have to call this function
+func (m *MQTT) Purge() {
+	if m.running {
+		m.Client.Unsubscribe(m.Topic)
+	}
+}
+
 func (m *MQTT) LastMessage() []byte {
 	data, err := m.MessageStore.Get()
 	if err != nil {
