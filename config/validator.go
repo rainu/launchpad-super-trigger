@@ -110,6 +110,17 @@ func validate(cfg *Config) error {
 
 		knownDatapointPaths := map[string]bool{}
 
+		//meta datapoints:
+		refConnections := reflect.ValueOf(cfg.Connections)
+		for connectionField := 0; connectionField < refConnections.NumField(); connectionField++ {
+			if refConnections.Field(connectionField).Kind() == reflect.Map {
+				//connections.mqtt
+				for _, connectionName := range refConnections.Field(connectionField).MapKeys() {
+					knownDatapointPaths[fmt.Sprintf("__connection[%s].status", connectionName.String())] = true
+				}
+			}
+		}
+
 		refSensors := reflect.ValueOf(cfg.Sensors)
 		for sensorField := 0; sensorField < refSensors.NumField(); sensorField++ {
 			if refSensors.Field(sensorField).Kind() == reflect.Map {

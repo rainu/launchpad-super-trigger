@@ -262,7 +262,40 @@ layout:
         * **sub** - subtraction
         * **mul** - multiplication
         * **div** - diversion
-    
+ 
+### Special sensors
+
+For each connection there is a "hidden" sensor which holds the connection status. This sensor can be used such like other
+sensors. You can reference them and use there datapoint(s). The name of the sensor is **__connection[&lt;connectionName&gt;]**.
+The name of the datapoint which holds the connection information is **status**. And it can have two states:
+* **Connected** -> the corresponding connection is established
+* **Disconnected** -> the corresponding connection is lost
+ 
+Example:
+
+```yaml
+connections:
+ mqtt:
+  test-broker:
+   broker: tcp://broker-host:1883
+   clientId: launchpad
+layout:
+ pages:
+  0:
+    plotter:
+      static:
+        - datapoint: __connection[test-broker].status
+          pos: 0,0
+            expressions:
+              eq:
+                - value: Connected
+                  color: 0,3
+                - value: Disconnected
+                  color: 3,0
+```
+
+You will see a green light on the left top corner if the mqtt-connection "test-broker" is established, otherwise there is a red light!
+
 # Special keys
 
 In the following you can read a description what do the special keys. The special keys are the round keys on the right side. 

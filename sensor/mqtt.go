@@ -23,6 +23,9 @@ func (m *MQTT) Run(ctx context.Context) error {
 	if m.running {
 		return fmt.Errorf("listerner is already running")
 	}
+	defer func() {
+		m.running = false
+	}()
 
 	m.running = true
 	m.Client.Subscribe(m.Topic, m.QOS, m.handleMessage)

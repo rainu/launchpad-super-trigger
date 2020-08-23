@@ -29,6 +29,9 @@ func (r *Rest) Run(ctx context.Context) error {
 	if r.running {
 		return fmt.Errorf("listerner is already running")
 	}
+	defer func() {
+		r.running = false
+	}()
 
 	timer := time.NewTimer(r.Interval)
 
