@@ -45,9 +45,7 @@ func (m *MQTT) Reinitialise() {
 
 // when the mqtt connection is lost, you have to call this function
 func (m *MQTT) Purge() {
-	if m.running {
-		m.Client.Unsubscribe(m.Topic)
-	}
+
 }
 
 func (m *MQTT) LastMessage() []byte {
@@ -61,11 +59,12 @@ func (m *MQTT) LastMessage() []byte {
 }
 
 func (m *MQTT) handleMessage(client mqtt.Client, message mqtt.Message) {
-	zap.L().Debug(fmt.Sprintf("Mqtt message received: %s", message.Topic()))
-	message.Ack()
+	go func() {
+		zap.L().Debug(fmt.Sprintf("Mqtt message received: %s", message.Topic()))
 
-	if err := m.MessageStore.Set(message.Payload()); err != nil {
-		zap.L().Error("Could not save message into message store!", zap.Error(err))
-	}
-	m.callbackHandler.Call(m)
+		if err := m.MessageStore.Set(message.Payload()); err != nil {
+			zap.L().Error("Could not save message into message store!", zap.Error(err))
+		}
+		m.callbackHandler.Call(m)
+	}()
 }
