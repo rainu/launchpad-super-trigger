@@ -3,6 +3,7 @@ package main
 import (
 	"context"
 	"fmt"
+	MQTT "github.com/eclipse/paho.mqtt.golang"
 	"github.com/rainu/launchpad-super-trigger/cmd/lst/config"
 	triggerConf "github.com/rainu/launchpad-super-trigger/config"
 	launchpad "github.com/rainu/launchpad-super-trigger/pad"
@@ -29,6 +30,11 @@ func main() {
 	)
 	zap.ReplaceGlobals(logger)
 	defer zap.L().Sync()
+
+	MQTT.ERROR, _ = zap.NewStdLogAt(zap.L(), zap.ErrorLevel)
+	MQTT.CRITICAL, _ = zap.NewStdLogAt(zap.L(), zap.ErrorLevel)
+	MQTT.WARN, _ = zap.NewStdLogAt(zap.L(), zap.WarnLevel)
+	MQTT.DEBUG, _ = zap.NewStdLogAt(zap.L(), zap.DebugLevel)
 
 	//start pprof if needed
 	if *Args.DebugPort > 0 {
