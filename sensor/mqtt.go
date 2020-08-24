@@ -59,12 +59,10 @@ func (m *MQTT) LastMessage() []byte {
 }
 
 func (m *MQTT) handleMessage(client mqtt.Client, message mqtt.Message) {
-	go func() {
-		zap.L().Debug(fmt.Sprintf("Mqtt message received: %s", message.Topic()))
+	zap.L().Debug(fmt.Sprintf("Mqtt message received: %s", message.Topic()))
 
-		if err := m.MessageStore.Set(message.Payload()); err != nil {
-			zap.L().Error("Could not save message into message store!", zap.Error(err))
-		}
-		m.callbackHandler.Call(m)
-	}()
+	if err := m.MessageStore.Set(message.Payload()); err != nil {
+		zap.L().Error("Could not save message into message store!", zap.Error(err))
+	}
+	m.callbackHandler.Call(m)
 }
