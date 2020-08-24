@@ -11,6 +11,9 @@ import (
 	"go.uber.org/zap"
 	"io"
 	"io/ioutil"
+	"log"
+	"net/http"
+	_ "net/http/pprof"
 	"os"
 	"os/signal"
 	"sync"
@@ -26,6 +29,14 @@ func main() {
 	)
 	zap.ReplaceGlobals(logger)
 	defer zap.L().Sync()
+
+	//start pprof if needed
+	if *Args.DebugPort > 0 {
+		zap.L().Info(fmt.Sprintf("Start pprof debug endpoint :%d", *Args.DebugPort))
+		go func() {
+			log.Println(http.ListenAndServe(fmt.Sprintf(":%d", *Args.DebugPort), nil))
+		}()
+	}
 
 	dispatcher, sensors, generalSettings := initialiseConfig()
 

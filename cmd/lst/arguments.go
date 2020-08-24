@@ -7,6 +7,7 @@ import (
 
 type applicationArgs struct {
 	ConfigPath *string
+	DebugPort  *int
 }
 
 var Args applicationArgs
@@ -14,6 +15,7 @@ var Args applicationArgs
 func LoadArgs() {
 	Args = applicationArgs{
 		ConfigPath: flag.String("config", "./config.yaml", "The configuration file/directory"),
+		DebugPort:  flag.Int("debug", -1, "The port for the (pprof) debug endpoint"),
 	}
 	flag.Parse()
 
