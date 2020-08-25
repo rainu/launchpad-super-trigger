@@ -2,12 +2,16 @@ package actor
 
 import (
 	"bytes"
-	mqtt "github.com/eclipse/paho.mqtt.golang"
+	"context"
 	"io"
 )
 
+type MQTTPublisher interface {
+	Publish(ctx context.Context, topic string, qos byte, retained bool, payload []byte) error
+}
+
 type Mqtt struct {
-	Client   mqtt.Client
+	Client   MQTTPublisher
 	Topic    string
 	QOS      byte
 	Retained bool
@@ -21,19 +25,5 @@ func (m *Mqtt) Do(ctx Context) error {
 		return err
 	}
 
-	token := m.Client.Publish(m.Topic, m.QOS, m.Retained, byteBuff.Bytes())
-
-	waitChan := make(chan error, 1)
-
-	go func() {
-		token.Wait()
-		waitChan <- token.Error()
-	}()
-
-	select {
-	case err := <-waitChan:
-		return err
-	case <-ctx.Context.Done():
-		return ctx.Context.Err()
-	}
+	return m.Client.Publish(ctx.Context, m.Topic, m.QOS, m.Retained, byteBuff.Bytes())
 }

@@ -1,7 +1,7 @@
 package mqtt
 
 import (
-	MQTT "github.com/eclipse/paho.mqtt.golang"
+	MQTT "github.com/goiiot/libmqtt"
 	"sync"
 )
 
@@ -17,38 +17,41 @@ type ConnectionListener interface {
 type connectionObserver struct {
 	listenerMutex sync.RWMutex
 	eventMutex    sync.Mutex
-	listener      []ConnectionListener
+	listener      map[interface{}]ConnectionListener
 }
 
 func (c *connectionObserver) AddListener(cl ConnectionListener) {
 	c.listenerMutex.Lock()
 	defer c.listenerMutex.Unlock()
 
-	c.listener = append(c.listener, cl)
-}
-
-func (c *connectionObserver) OnConnectHandler() MQTT.OnConnectHandler {
-	return func(client MQTT.Client) {
-		c.listenerMutex.RLock()
-		c.eventMutex.Lock()
-		defer c.listenerMutex.RUnlock()
-		defer c.eventMutex.Unlock()
-
-		for _, listener := range c.listener {
-			listener.OnConnect(client)
-		}
+	if c.listener == nil {
+		c.listener = map[interface{}]ConnectionListener{}
 	}
+
+	c.listener[cl] = cl
+}
+func (c *connectionObserver) RemoveListener(cl ConnectionListener) {
+	c.listenerMutex.Lock()
+	defer c.listenerMutex.Unlock()
+
+	delete(c.listener, cl)
 }
 
-func (c *connectionObserver) ConnectionLostHandler() MQTT.ConnectionLostHandler {
-	return func(client MQTT.Client, err error) {
+func (c *connectionObserver) OnConnectHandler() MQTT.ConnHandleFunc {
+	return func(client MQTT.Client, server string, code byte, err error) {
 		c.listenerMutex.RLock()
 		c.eventMutex.Lock()
 		defer c.listenerMutex.RUnlock()
 		defer c.eventMutex.Unlock()
 
-		for _, listener := range c.listener {
-			listener.OnConnectionLost(client, err)
+		if code == MQTT.CodeSuccess {
+			for _, listener := range c.listener {
+				listener.OnConnect(client)
+			}
+		} else {
+			for _, listener := range c.listener {
+				listener.OnConnectionLost(client, err)
+			}
 		}
 	}
 }

@@ -4,8 +4,8 @@ go 1.14
 
 require (
 	github.com/boltdb/bolt v1.3.1
-	github.com/eclipse/paho.mqtt.golang v1.2.0
 	github.com/go-playground/universal-translator v0.17.0 // indirect
+	github.com/goiiot/libmqtt v0.9.5
 	github.com/itchyny/gojq v0.11.0
 	github.com/leodido/go-urn v1.2.0 // indirect
 	github.com/niemeyer/pretty v0.0.0-20200227124842-a10e7caefd8e // indirect

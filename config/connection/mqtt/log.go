@@ -1,7 +1,7 @@
 package mqtt
 
 import (
-	MQTT "github.com/eclipse/paho.mqtt.golang"
+	MQTT "github.com/goiiot/libmqtt"
 	"go.uber.org/zap"
 )
 

@@ -1,6 +1,7 @@
 package config
 
 import (
+	"context"
 	"github.com/rainu/launchpad-super-trigger/config"
 	configActor "github.com/rainu/launchpad-super-trigger/config/actor"
 	connectionMqtt "github.com/rainu/launchpad-super-trigger/config/connection/mqtt"
@@ -28,8 +29,8 @@ func ConfigureDispatcher(configReader ...io.Reader) (*pad.TriggerDispatcher, map
 
 	//establish mqtt connections after callbacks were registered
 	for _, connection := range connections {
-		if token := connection.Connect(); token.Wait() && token.Error() != nil {
-			zap.L().Fatal("Error while connecting to mqtt broker: %s", zap.Error(token.Error()))
+		if err := connection.Connect(context.Background()); err != nil {
+			zap.L().Fatal("Error while connecting to mqtt broker: %s", zap.Error(err))
 		}
 	}
 

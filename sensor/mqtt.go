@@ -3,15 +3,18 @@ package sensor
 import (
 	"context"
 	"fmt"
-	mqtt "github.com/eclipse/paho.mqtt.golang"
 	"github.com/rainu/launchpad-super-trigger/sensor/store"
 	"go.uber.org/zap"
 )
 
+type MQTTSubscriber interface {
+	Subscribe(topic string, qos byte, clb func(string, byte, []byte))
+}
+
 type MQTT struct {
 	callbackHandler
 
-	Client       mqtt.Client
+	Client       MQTTSubscriber
 	Topic        string
 	QOS          byte
 	MessageStore store.Store
@@ -28,7 +31,7 @@ func (m *MQTT) Run(ctx context.Context) error {
 	}()
 
 	m.running = true
-	m.Client.Subscribe(m.Topic, m.QOS, m.handleMessage)
+	m.Reinitialise()
 
 	//wait until context closed
 	<-ctx.Done()
@@ -58,10 +61,10 @@ func (m *MQTT) LastMessage() []byte {
 	return data
 }
 
-func (m *MQTT) handleMessage(client mqtt.Client, message mqtt.Message) {
-	zap.L().Debug(fmt.Sprintf("Mqtt message received: %s", message.Topic()))
+func (m *MQTT) handleMessage(topic string, qos byte, msg []byte) {
+	zap.L().Debug(fmt.Sprintf("Mqtt message received: %s", topic))
 
-	if err := m.MessageStore.Set(message.Payload()); err != nil {
+	if err := m.MessageStore.Set(msg); err != nil {
 		zap.L().Error("Could not save message into message store!", zap.Error(err))
 	}
 	m.callbackHandler.Call(m)

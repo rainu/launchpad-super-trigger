@@ -2,7 +2,7 @@ package sensor
 
 import (
 	"fmt"
-	MQTT "github.com/eclipse/paho.mqtt.golang"
+	MQTT "github.com/goiiot/libmqtt"
 	"github.com/rainu/launchpad-super-trigger/config"
 	"github.com/rainu/launchpad-super-trigger/config/connection/mqtt"
 	"github.com/rainu/launchpad-super-trigger/sensor"

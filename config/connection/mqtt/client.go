@@ -1,48 +1,69 @@
 package mqtt
 
-import MQTT "github.com/eclipse/paho.mqtt.golang"
+import (
+	"context"
+	MQTT "github.com/goiiot/libmqtt"
+)
 
 type mqttClient struct {
+	broker      string
 	client      MQTT.Client
 	conObserver connectionObserver
 }
 
-func (m *mqttClient) IsConnected() bool {
-	return m.client.IsConnected()
+type connectionListener struct {
+	errChan chan error
 }
 
-func (m *mqttClient) IsConnectionOpen() bool {
-	return m.client.IsConnectionOpen()
+func (c *connectionListener) OnConnect(client MQTT.Client) {
+	c.errChan <- nil
 }
 
-func (m *mqttClient) Connect() MQTT.Token {
-	return m.client.Connect()
+func (c *connectionListener) OnConnectionLost(client MQTT.Client, err error) {
+	c.errChan <- err
 }
 
-func (m *mqttClient) Disconnect(quiesce uint) {
-	m.client.Disconnect(quiesce)
+func (m *mqttClient) Connect(ctx context.Context) error {
+	errChan := make(chan error, 1)
+	defer close(errChan)
+
+	listener := &connectionListener{errChan}
+	defer func() {
+		//we can remove our listener -> the only purpose was to wait for connection!
+		m.conObserver.RemoveListener(listener)
+	}()
+
+	m.conObserver.AddListener(listener)
+	err := m.client.ConnectServer(m.broker, MQTT.WithConnHandleFunc(m.conObserver.OnConnectHandler()))
+	if err != nil {
+		return err
+	}
+
+	//wait until connection established
+	select {
+	case err := <-errChan:
+		return err
+	case <-ctx.Done():
+		return ctx.Err()
+	}
 }
 
-func (m *mqttClient) Publish(topic string, qos byte, retained bool, payload interface{}) MQTT.Token {
-	return m.client.Publish(topic, qos, retained, payload)
+func (m *mqttClient) Subscribe(topic string, qos byte, clb func(string, byte, []byte)) {
+	m.client.HandleTopic(topic, func(client MQTT.Client, topic string, qos MQTT.QosLevel, msg []byte) {
+		clb(topic, qos, msg)
+	})
+	m.client.Subscribe(&MQTT.Topic{
+		Name: topic,
+		Qos:  qos,
+	})
 }
 
-func (m *mqttClient) Subscribe(topic string, qos byte, callback MQTT.MessageHandler) MQTT.Token {
-	return m.client.Subscribe(topic, qos, callback)
-}
-
-func (m *mqttClient) SubscribeMultiple(filters map[string]byte, callback MQTT.MessageHandler) MQTT.Token {
-	return m.client.SubscribeMultiple(filters, callback)
-}
-
-func (m *mqttClient) Unsubscribe(topics ...string) MQTT.Token {
-	return m.client.Unsubscribe(topics...)
-}
-
-func (m *mqttClient) AddRoute(topic string, callback MQTT.MessageHandler) {
-	m.client.AddRoute(topic, callback)
-}
-
-func (m *mqttClient) OptionsReader() MQTT.ClientOptionsReader {
-	return m.client.OptionsReader()
+func (m *mqttClient) Publish(ctx context.Context, topic string, qos byte, retained bool, payload []byte) error {
+	m.client.Publish(&MQTT.PublishPacket{
+		TopicName: topic,
+		Qos:       qos,
+		IsRetain:  retained,
+		Payload:   payload,
+	})
+	return nil
 }

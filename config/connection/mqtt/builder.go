@@ -1,12 +1,16 @@
 package mqtt
 
 import (
-	MQTT "github.com/eclipse/paho.mqtt.golang"
+	"context"
+	MQTT "github.com/goiiot/libmqtt"
 	"github.com/rainu/launchpad-super-trigger/config"
+	"go.uber.org/zap"
 )
 
 type Client interface {
-	MQTT.Client
+	Connect(ctx context.Context) error
+	Publish(ctx context.Context, topic string, qos byte, retained bool, payload []byte) error
+	Subscribe(topic string, qos byte, clb func(string, byte, []byte))
 	AddListener(cl ConnectionListener)
 }
 
@@ -25,17 +29,18 @@ func buildMqttConnection(connection config.MQTTConnection) Client {
 		conObserver: connectionObserver{},
 	}
 
-	opts := MQTT.NewClientOptions()
-	opts.AddBroker(connection.Broker)
+	client, err := MQTT.NewClient(
+		MQTT.WithClientID(connection.ClientId),
+		MQTT.WithIdentity(connection.Username, connection.Password),
+		MQTT.WithCleanSession(true),
+		MQTT.WithAutoReconnect(true),
+	)
+	if err != nil {
+		zap.L().Fatal("Error build connecting to mqtt broker: %s", zap.Error(err))
+	}
 
-	opts.SetAutoReconnect(true)
-	opts.SetClientID(connection.ClientId)
-	opts.SetUsername(connection.Username)
-	opts.SetPassword(connection.Password)
-	opts.SetOnConnectHandler(result.conObserver.OnConnectHandler())
-	opts.SetConnectionLostHandler(result.conObserver.ConnectionLostHandler())
-
-	result.client = MQTT.NewClient(opts)
+	result.broker = connection.Broker
+	result.client = client
 	result.conObserver.AddListener(&logConnectionListener{}) //for logging purposes
 
 	return result
