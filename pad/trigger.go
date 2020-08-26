@@ -4,9 +4,7 @@ import (
 	"context"
 	"fmt"
 	"github.com/rainu/launchpad"
-	"gitlab.com/gomidi/midi"
 	"go.uber.org/zap"
-	"strings"
 	"sync"
 	"time"
 )
@@ -16,26 +14,19 @@ import (
 type TriggerHandleFunc func(lighter Lighter, page PageNumber, x, y int) error
 
 type LaunchpadSuperTrigger struct {
-	pad         launchpad.Launchpad
-	driver      midi.Driver
+	pad         Launchpad
 	lighter     Lighter
 	currentPage *Page
 	specials    *special
 	handle      TriggerHandleFunc
 }
 
-func NewLaunchpadSuperTrigger(driver midi.Driver, handler TriggerHandleFunc) (*LaunchpadSuperTrigger, error) {
-	pad, err := launchpad.NewLaunchpad(driver)
-	if err != nil {
-		return nil, err
-	}
-
+func NewLaunchpadSuperTrigger(pad Launchpad, handler TriggerHandleFunc) *LaunchpadSuperTrigger {
 	page := NewPage(0)
 	special := newSpecial()
 
 	return &LaunchpadSuperTrigger{
-		pad:    pad,
-		driver: driver,
+		pad: pad,
 		lighter: &triggerAreaLighter{
 			page:    page,
 			special: special,
@@ -47,7 +38,7 @@ func NewLaunchpadSuperTrigger(driver midi.Driver, handler TriggerHandleFunc) (*L
 		currentPage: page,
 		specials:    special,
 		handle:      handler,
-	}, nil
+	}
 }
 
 func (l *LaunchpadSuperTrigger) Initialise(startPage int, navigationMode byte) error {
@@ -68,21 +59,13 @@ func (l *LaunchpadSuperTrigger) Initialise(startPage int, navigationMode byte) e
 
 func (l *LaunchpadSuperTrigger) WaitForConnectionLost(ctx context.Context) {
 	ticker := time.NewTicker(1 * time.Second)
-outerLoop:
 	for {
 		select {
 		case <-ticker.C:
-			ins, err := l.driver.Ins()
-			if err != nil {
+			if !l.pad.IsHealthy() {
+				// unhealthy -> connection lost
 				return
 			}
-
-			for i := range ins {
-				if strings.Contains(ins[i].String(), "Launchpad S") {
-					continue outerLoop
-				}
-			}
-			return //no launchpad found -> connections lost
 		case <-ctx.Done():
 			return
 		}

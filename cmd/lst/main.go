@@ -45,10 +45,11 @@ func main() {
 		zap.L().Fatal("Unable to load midi driver: %s", zap.Error(err))
 	}
 
-	pad, err := launchpad.NewLaunchpadSuperTrigger(d, dispatcher.Handle)
+	realPad, err := launchpad.NewLaunchpad(d)
 	if err != nil {
 		zap.L().Fatal("error while opening connection to launchpad: %v", zap.Error(err))
 	}
+	pad := launchpad.NewLaunchpadSuperTrigger(realPad, dispatcher.Handle)
 	defer pad.Close()
 
 	err = pad.Initialise(
