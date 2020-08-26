@@ -6,6 +6,7 @@ import (
 	"github.com/rainu/launchpad-super-trigger/cmd/lst/config"
 	triggerConf "github.com/rainu/launchpad-super-trigger/config"
 	launchpad "github.com/rainu/launchpad-super-trigger/pad"
+	"github.com/rainu/launchpad-super-trigger/pad/gui"
 	"github.com/rainu/launchpad-super-trigger/sensor"
 	driver "gitlab.com/gomidi/rtmididrv"
 	"go.uber.org/zap"
@@ -40,19 +41,33 @@ func main() {
 
 	dispatcher, sensors, generalSettings := initialiseConfig()
 
-	d, err := driver.New()
-	if err != nil {
-		zap.L().Fatal("Unable to load midi driver: %s", zap.Error(err))
+	//launchpad backend  configuration
+
+	var guiPad *gui.FakeLaunchpad
+	var padBackend launchpad.Launchpad
+
+	if *Args.Gui {
+		guiPad = gui.NewLaunchpad()
+		padBackend = guiPad
+	} else {
+		d, err := driver.New()
+		if err != nil {
+			zap.L().Fatal("Unable to load midi driver: %s", zap.Error(err))
+		}
+
+		p, err := launchpad.NewLaunchpad(d)
+		if err != nil {
+			zap.L().Fatal("error while opening connection to launchpad: %v", zap.Error(err))
+		}
+		padBackend = p
 	}
 
-	realPad, err := launchpad.NewLaunchpad(d)
-	if err != nil {
-		zap.L().Fatal("error while opening connection to launchpad: %v", zap.Error(err))
-	}
-	pad := launchpad.NewLaunchpadSuperTrigger(realPad, dispatcher.Handle)
+	//launchpad configuration
+
+	pad := launchpad.NewLaunchpadSuperTrigger(padBackend, dispatcher.Handle)
 	defer pad.Close()
 
-	err = pad.Initialise(
+	err := pad.Initialise(
 		generalSettings.StartPage.AsInt(),
 		generalSettings.NavigationMode,
 	)
@@ -87,6 +102,10 @@ func main() {
 		pad.WaitForConnectionLost(ctx)
 		connectionLost <- true
 	}()
+
+	if guiPad != nil {
+		guiPad.StartAndBlock()
+	}
 
 	//wait for interrupt or connection lost
 	select {
