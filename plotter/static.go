@@ -11,7 +11,7 @@ type Static struct {
 	X            int
 	Y            int
 	Expressions  []StaticExpression
-	DefaultColor *pad.Color
+	DefaultColor pad.Color
 }
 
 func (s Static) Plot(ctx Context) error {

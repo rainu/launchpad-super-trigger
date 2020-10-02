@@ -6,9 +6,10 @@ import (
 )
 
 type Lighter interface {
-	Light(x, y, g, r int) error
-	Text(g, r int) launchpad.ScrollingTextBuilder
-	TextLoop(g, r int) launchpad.ScrollingTextBuilder
+	Light(x, y int, color launchpad.Color) error
+	Text(color launchpad.Color) launchpad.ScrollingTextBuilder
+	TextLoop(color launchpad.Color) launchpad.ScrollingTextBuilder
+	Name() string
 	Clear() error
 }
 
@@ -18,23 +19,27 @@ type triggerAreaLighter struct {
 	delegate Lighter
 }
 
-func (t *triggerAreaLighter) Light(x, y, g, r int) error {
+func (t *triggerAreaLighter) Light(x, y int, color launchpad.Color) error {
 	//make sure that only trigger buttons can be lighted
 	if x >= 0 && x < 8 &&
 		y >= 0 && y < 8 {
 
-		return t.delegate.Light(x, y, g, r)
+		return t.delegate.Light(x, y, color)
 	}
 
 	return nil
 }
 
-func (t *triggerAreaLighter) Text(g, r int) launchpad.ScrollingTextBuilder {
-	return t.delegate.Text(g, r)
+func (t *triggerAreaLighter) Text(color launchpad.Color) launchpad.ScrollingTextBuilder {
+	return t.delegate.Text(color)
 }
 
-func (t *triggerAreaLighter) TextLoop(g, r int) launchpad.ScrollingTextBuilder {
-	return t.delegate.TextLoop(g, r)
+func (t *triggerAreaLighter) TextLoop(color launchpad.Color) launchpad.ScrollingTextBuilder {
+	return t.delegate.TextLoop(color)
+}
+
+func (t *triggerAreaLighter) Name() string {
+	return t.delegate.Name()
 }
 
 func (t *triggerAreaLighter) Clear() error {
@@ -62,25 +67,29 @@ type threadSafeTextBuilder struct {
 	delegate launchpad.ScrollingTextBuilder
 }
 
-func (t *threadSafeLighter) Light(x, y, g, r int) error {
+func (t *threadSafeLighter) Light(x, y int, color launchpad.Color) error {
 	t.mux.Lock()
 	defer t.mux.Unlock()
 
-	return t.delegate.Light(x, y, g, r)
+	return t.delegate.Light(x, y, color)
 }
 
-func (t *threadSafeLighter) Text(g, r int) launchpad.ScrollingTextBuilder {
+func (t *threadSafeLighter) Text(color launchpad.Color) launchpad.ScrollingTextBuilder {
 	return &threadSafeTextBuilder{
 		mux:      &t.mux,
-		delegate: t.delegate.Text(g, r),
+		delegate: t.delegate.Text(color),
 	}
 }
 
-func (t *threadSafeLighter) TextLoop(g, r int) launchpad.ScrollingTextBuilder {
+func (t *threadSafeLighter) TextLoop(color launchpad.Color) launchpad.ScrollingTextBuilder {
 	return &threadSafeTextBuilder{
 		mux:      &t.mux,
-		delegate: t.delegate.TextLoop(g, r),
+		delegate: t.delegate.TextLoop(color),
 	}
+}
+
+func (t *threadSafeLighter) Name() string {
+	return t.delegate.Name()
 }
 
 func (t *threadSafeLighter) Clear() error {

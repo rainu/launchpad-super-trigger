@@ -19,61 +19,61 @@ func buildStatic(allPlotter map[plotter.Plotter]config.Datapoint, staticPlotter 
 
 		for _, expression := range static.Expressions.Eq {
 			sb.Expressions = append(sb.Expressions, plotter.StaticExpression{
-				ActivationColor: colorOrDefault(expression.ActivationColor, pad.ColorHighGreen),
+				ActivationColor: colorOrDefault(expression.ActivationColor, pad.ColorGreen),
 				Matches:         expressions.BuildEqExpressionFn(expression.Value),
 			})
 		}
 		for _, expression := range static.Expressions.Ne {
 			sb.Expressions = append(sb.Expressions, plotter.StaticExpression{
-				ActivationColor: colorOrDefault(expression.ActivationColor, pad.ColorHighGreen),
+				ActivationColor: colorOrDefault(expression.ActivationColor, pad.ColorGreen),
 				Matches:         expressions.BuildNeExpressionFn(expression.Value),
 			})
 		}
 		for _, expression := range static.Expressions.Lt {
 			sb.Expressions = append(sb.Expressions, plotter.StaticExpression{
-				ActivationColor: colorOrDefault(expression.ActivationColor, pad.ColorHighGreen),
+				ActivationColor: colorOrDefault(expression.ActivationColor, pad.ColorGreen),
 				Matches:         expressions.BuildLtExpressionFn(expression.Value),
 			})
 		}
 		for _, expression := range static.Expressions.Lte {
 			sb.Expressions = append(sb.Expressions, plotter.StaticExpression{
-				ActivationColor: colorOrDefault(expression.ActivationColor, pad.ColorHighGreen),
+				ActivationColor: colorOrDefault(expression.ActivationColor, pad.ColorGreen),
 				Matches:         expressions.BuildLteExpressionFn(expression.Value),
 			})
 		}
 		for _, expression := range static.Expressions.Gt {
 			sb.Expressions = append(sb.Expressions, plotter.StaticExpression{
-				ActivationColor: colorOrDefault(expression.ActivationColor, pad.ColorHighGreen),
+				ActivationColor: colorOrDefault(expression.ActivationColor, pad.ColorGreen),
 				Matches:         expressions.BuildGtExpressionFn(expression.Value),
 			})
 		}
 		for _, expression := range static.Expressions.Gte {
 			sb.Expressions = append(sb.Expressions, plotter.StaticExpression{
-				ActivationColor: colorOrDefault(expression.ActivationColor, pad.ColorHighGreen),
+				ActivationColor: colorOrDefault(expression.ActivationColor, pad.ColorGreen),
 				Matches:         expressions.BuildGteExpressionFn(expression.Value),
 			})
 		}
 		for _, expression := range static.Expressions.Match {
 			sb.Expressions = append(sb.Expressions, plotter.StaticExpression{
-				ActivationColor: colorOrDefault(expression.ActivationColor, pad.ColorHighGreen),
+				ActivationColor: colorOrDefault(expression.ActivationColor, pad.ColorGreen),
 				Matches:         expressions.BuildMatchExpressionFn(expression.Value),
 			})
 		}
 		for _, expression := range static.Expressions.NotMatch {
 			sb.Expressions = append(sb.Expressions, plotter.StaticExpression{
-				ActivationColor: colorOrDefault(expression.ActivationColor, pad.ColorHighGreen),
+				ActivationColor: colorOrDefault(expression.ActivationColor, pad.ColorGreen),
 				Matches:         expressions.BuildNotMatchExpressionFn(expression.Value),
 			})
 		}
 		for _, expression := range static.Expressions.Contains {
 			sb.Expressions = append(sb.Expressions, plotter.StaticExpression{
-				ActivationColor: colorOrDefault(expression.ActivationColor, pad.ColorHighGreen),
+				ActivationColor: colorOrDefault(expression.ActivationColor, pad.ColorGreen),
 				Matches:         expressions.BuildContainsExpressionFn(expression.Value),
 			})
 		}
 		for _, expression := range static.Expressions.NotContains {
 			sb.Expressions = append(sb.Expressions, plotter.StaticExpression{
-				ActivationColor: colorOrDefault(expression.ActivationColor, pad.ColorHighGreen),
+				ActivationColor: colorOrDefault(expression.ActivationColor, pad.ColorGreen),
 				Matches:         expressions.BuildNotContainsExpressionFn(expression.Value),
 			})
 		}
@@ -82,7 +82,7 @@ func buildStatic(allPlotter map[plotter.Plotter]config.Datapoint, staticPlotter 
 	}
 }
 
-func pColorOrDefault(color *config.Color, defaultColor *pad.Color) *pad.Color {
+func pColorOrDefault(color *config.Color, defaultColor pad.Color) pad.Color {
 	if color == nil {
 		return defaultColor
 	}
@@ -91,5 +91,5 @@ func pColorOrDefault(color *config.Color, defaultColor *pad.Color) *pad.Color {
 	if err != nil {
 		return defaultColor
 	}
-	return &c
+	return c
 }

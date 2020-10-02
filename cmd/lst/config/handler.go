@@ -28,10 +28,10 @@ type ColorSettings struct {
 }
 
 var defaultColorSettings = ColorSettings{
-	Ready:    pad.ColorHighGreen,
-	Progress: pad.ColorHighOrange,
-	Success:  pad.ColorHighGreen,
-	Failed:   pad.ColorHighRed,
+	Ready:    pad.ColorGreen,
+	Progress: pad.ColorOrange,
+	Success:  pad.ColorGreen,
+	Failed:   pad.ColorRed,
 }
 
 type pageHandler struct {

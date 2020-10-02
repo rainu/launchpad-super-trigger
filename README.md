@@ -225,7 +225,8 @@ layout:
         * "X,0-7" -> all Y from 0 until 7 and given X
         * "0-7,0-7" -> all X from 0 until 7 and all Y from 0 until 7
 * *color*
-    * "r,g" -> **r** is the red value of the color and must be between 0 and 3. **g** is the green value of the color and must be between 0 and 3.
+    * "r,g" (Launchpad S) -> **r** is the red value of the color and must be between 0 and 3. **g** is the green value of the color and must be between 0 and 3.
+    * "r,g,b" (Launchpad MK2) -> **r** is the red value of the color and must be between 0 and 63. **g** is the green value of the color and must be between 0 and 63. **b** is the blue value of the color and must be between 0 and 63.
 * *datapoint reference*
     * **sensorName**.**datapointName**
 * *body template*

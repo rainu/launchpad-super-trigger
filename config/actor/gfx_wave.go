@@ -11,7 +11,7 @@ func buildGfxWave(actors map[string]actor.Actor, gfxActors map[string]config.Gfx
 	for actorName, gActor := range gfxActors {
 		handler := &actor.GfxWave{
 			Square: gActor.Square,
-			Color:  colorOrDefault(gActor.Color, pad.ColorHighGreen),
+			Color:  colorOrDefault(gActor.Color, pad.ColorGreen),
 			Delay:  gActor.Delay,
 		}
 		if handler.Delay == 0 {

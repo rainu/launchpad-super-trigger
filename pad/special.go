@@ -49,7 +49,7 @@ func (s *special) lightNavigation(pad Lighter) error {
 	if s.pageNavigationMode == PageNavigationBinary {
 		return ColorOff.Light(pad, 8, 0)
 	} else {
-		return ColorHighGreen.Light(pad, 8, 0)
+		return ColorGreen.Light(pad, 8, 0)
 	}
 }
 
@@ -61,7 +61,7 @@ func (s *special) ToggleLock(pad Lighter) error {
 
 func (s *special) lightArm(pad Lighter) error {
 	if s.locked {
-		return ColorHighRed.Light(pad, 8, 7)
+		return ColorRed.Light(pad, 8, 7)
 	}
 	return ColorOff.Light(pad, 8, 7)
 }

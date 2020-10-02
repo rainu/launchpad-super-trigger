@@ -45,3 +45,7 @@ func (r *realLaunchpad) IsHealthy() bool {
 	}
 	return false //no launchpad found -> connections lost
 }
+
+func (r *realLaunchpad) Name() string {
+	return r.Out().String()
+}

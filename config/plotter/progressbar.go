@@ -16,7 +16,7 @@ func buildProgressbar(allPlotter map[plotter.Plotter]config.Datapoint, progressP
 			Min:       progressbar.Min,
 			Direction: gfx.AscDirection,
 			Vertical:  progressbar.Vertical,
-			Fill:      colorOrDefault(progressbar.Fill, pad.ColorHighGreen),
+			Fill:      colorOrDefault(progressbar.Fill, pad.ColorGreen),
 			Empty:     colorOrDefault(progressbar.Empty, pad.ColorOff),
 		}
 		if progressbar.Max != nil {

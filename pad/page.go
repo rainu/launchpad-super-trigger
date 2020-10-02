@@ -1,6 +1,6 @@
 package pad
 
-var setColor = ColorHighGreen
+var setColor = ColorGreen
 var unsetColor = ColorOff
 var EmptyPage = Page{
 	ColorRepresentation: []Color{unsetColor, unsetColor, unsetColor, unsetColor, unsetColor, unsetColor, unsetColor, unsetColor},
