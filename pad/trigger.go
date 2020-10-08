@@ -110,6 +110,8 @@ func (l *LaunchpadSuperTrigger) Run(ctx context.Context) {
 					zap.L().Error("Error while handling hit!", zap.Error(err))
 				}
 			} else if IsSpecialVol(hit) {
+				l.specials.ChangeBrightness(l.pad)
+			} else if IsSpecialPan(hit) {
 				//change the navigationMode
 				if err := l.specials.SwitchPageNavigationMode(l.pad); err != nil {
 					zap.L().Error("Could not switch page navigation mode!", zap.Error(err))

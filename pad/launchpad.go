@@ -11,6 +11,8 @@ type Launchpad interface {
 	Lighter
 	io.Closer
 
+	SetBrightness(BrightnessLevel)
+	GetBrightness() BrightnessLevel
 	ListenToHits() (<-chan launchpad.Hit, error)
 	IsHealthy() bool
 }
@@ -26,9 +28,12 @@ func NewLaunchpad(driver midi.Driver) (Launchpad, error) {
 	if err != nil {
 		return nil, err
 	}
-	return &realLaunchpad{
-		Launchpad: pad,
-		driver:    driver,
+	return &brightnessMiddleware{
+		delegate: &realLaunchpad{
+			Launchpad: pad,
+			driver:    driver,
+		},
+		brightness: 100,
 	}, nil
 }
 

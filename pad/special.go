@@ -30,6 +30,16 @@ func (s *special) Light(pad Lighter) error {
 	return nil
 }
 
+func (s *special) ChangeBrightness(pad Launchpad) {
+	bl := pad.GetBrightness()
+	bl -= 5
+	if bl <= 0 {
+		bl = 100
+	}
+
+	pad.SetBrightness(bl)
+}
+
 func (s *special) SetPageNavigationMode(mode byte, pad Lighter) error {
 	s.pageNavigationMode = mode
 	return s.Light(pad)
@@ -47,9 +57,9 @@ func (s *special) SwitchPageNavigationMode(pad Lighter) error {
 
 func (s *special) lightNavigation(pad Lighter) error {
 	if s.pageNavigationMode == PageNavigationBinary {
-		return ColorOff.Light(pad, 8, 0)
+		return ColorOff.Light(pad, 8, 1)
 	} else {
-		return ColorGreen.Light(pad, 8, 0)
+		return ColorGreen.Light(pad, 8, 1)
 	}
 }
 

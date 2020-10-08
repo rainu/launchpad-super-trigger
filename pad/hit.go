@@ -43,6 +43,10 @@ func IsSpecialVol(hit launchpad.Hit) bool {
 	return IsSpecialHit(hit) && hit.Y == 0
 }
 
+func IsSpecialPan(hit launchpad.Hit) bool {
+	return IsSpecialHit(hit) && hit.Y == 1
+}
+
 func IsSpecialArm(hit launchpad.Hit) bool {
 	return IsSpecialHit(hit) && hit.Y == 7
 }

@@ -303,6 +303,10 @@ In the following you can read a description what do the special keys. The specia
 
 ## vol
 
+With this key you can change the brightness. This feature is only available if you use a Launchpad MK2 with RGB-Colors.
+
+## pan
+
 With this key you can switch between the different page navigation modes:
 
 |mode|color|description|
