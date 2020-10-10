@@ -199,7 +199,7 @@ func getGlobalFunctions() map[string]interface{} {
 	return globalFuncMap
 }
 
-func add(b, a interface{}) (interface{}, error) {
+func add(a, b interface{}) (interface{}, error) {
 	av := reflect.ValueOf(a)
 	bv := reflect.ValueOf(b)
 
@@ -242,7 +242,7 @@ func add(b, a interface{}) (interface{}, error) {
 	}
 }
 
-func sub(b, a interface{}) (interface{}, error) {
+func sub(a, b interface{}) (interface{}, error) {
 	av := reflect.ValueOf(a)
 	bv := reflect.ValueOf(b)
 
@@ -285,7 +285,7 @@ func sub(b, a interface{}) (interface{}, error) {
 	}
 }
 
-func mul(b, a interface{}) (interface{}, error) {
+func mul(a, b interface{}) (interface{}, error) {
 	av := reflect.ValueOf(a)
 	bv := reflect.ValueOf(b)
 
@@ -328,7 +328,7 @@ func mul(b, a interface{}) (interface{}, error) {
 	}
 }
 
-func div(b, a interface{}) (interface{}, error) {
+func div(a, b interface{}) (interface{}, error) {
 	av := reflect.ValueOf(a)
 	bv := reflect.ValueOf(b)
 
