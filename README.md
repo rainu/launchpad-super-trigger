@@ -263,6 +263,12 @@ layout:
         * **sub** - subtraction
         * **mul** - multiplication
         * **div** - diversion
+    * Complex example - **add 13* to data point **ram** from sensor **notebook**:
+        ```
+        {{ $sr := .DataPointOr "notebook.ram" "0" }}
+        {{ $r := strconv_Atoi $sr }}
+        {{ add $r 13 }}
+        ```
  
 ### Special sensors
 
