@@ -7,7 +7,11 @@ import (
 )
 
 func ReadConfig(configReader ...io.Reader) (*Config, error) {
-	result := &Config{}
+	result := &Config{
+		General: General{
+			StartBrightness: 100,
+		},
+	}
 
 	for _, reader := range configReader {
 		err := yaml.NewDecoder(reader).Decode(result)

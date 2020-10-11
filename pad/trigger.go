@@ -41,10 +41,12 @@ func NewLaunchpadSuperTrigger(pad Launchpad, handler TriggerHandleFunc) *Launchp
 	}
 }
 
-func (l *LaunchpadSuperTrigger) Initialise(startPage int, navigationMode byte) error {
+func (l *LaunchpadSuperTrigger) Initialise(startPage int, startBrightness BrightnessLevel, navigationMode byte) error {
 	if err := l.pad.Clear(); err != nil {
 		return err
 	}
+
+	l.pad.SetBrightness(startBrightness)
 
 	if err := l.currentPage.Goto(PageNumber(startPage), l.pad); err != nil {
 		return err

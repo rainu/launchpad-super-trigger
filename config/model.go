@@ -2,6 +2,7 @@ package config
 
 import (
 	"github.com/rainu/launchpad-super-trigger/gfx"
+	"github.com/rainu/launchpad-super-trigger/pad"
 	"time"
 )
 
@@ -14,10 +15,11 @@ type Config struct {
 }
 
 type General struct {
-	StartPage          PageNumber `yaml:"startPage" validate:"omitempty,pagenumber"`
-	NavigationMode     byte       `yaml:"navigationMode" validate:"oneof=0 1"`
-	SensorStore        string     `yaml:"sensorStore"`
-	CompressSensorData bool       `yaml:"compressSensorData"`
+	StartPage          PageNumber          `yaml:"startPage" validate:"omitempty,pagenumber"`
+	StartBrightness    pad.BrightnessLevel `yaml:"startBrightness" validate:"gte=0,lte=100"`
+	NavigationMode     byte                `yaml:"navigationMode" validate:"oneof=0 1"`
+	SensorStore        string              `yaml:"sensorStore"`
+	CompressSensorData bool                `yaml:"compressSensorData"`
 }
 
 type Connections struct {

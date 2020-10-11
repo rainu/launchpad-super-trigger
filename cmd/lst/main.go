@@ -54,6 +54,7 @@ func main() {
 
 	err = pad.Initialise(
 		generalSettings.StartPage.AsInt(),
+		generalSettings.StartBrightness,
 		generalSettings.NavigationMode,
 	)
 	if err != nil {

@@ -51,6 +51,7 @@ layout:
 |---|---|---|---|
 | general | - | false | Contains all general settings. |
 | general.startPage | 0 | false | The page which should active when the application starts. |
+| general.startBrightness | 100 | false | The brightness which should be used at start the application. It is only effective when the Launchpad MK2 with RGB-Colors is used. |
 | general.navigationMode | 0 | false | The page navigation mode: 0 => binary mode; 1 => toggle mode |
 | general.sensorStore | - | false | If the sensor data should be persisted, here you can set the file path to the [bolt-db](https://github.com/boltdb/bolt). Otherwise the sensor date will only keep in memory. |
 | general.compressSensorData | false | false | Should the received sensor data be (gzip) compressed? This will work with all store types (memory or bolt). |
