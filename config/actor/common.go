@@ -14,7 +14,6 @@ func BuildActors(parsedConfig *config.Config, sensors map[string]sensor.Sensor, 
 	buildRest(handler, parsedConfig.Actors.Rest, templateEngine)
 	buildMqtt(handler, parsedConfig.Actors.Mqtt, mqttConnections, templateEngine)
 	buildCommand(handler, parsedConfig.Actors.Command)
-	buildCombined(handler, parsedConfig.Actors.Combined)
 	buildPageSwitch(handler, parsedConfig.Actors.MetaPageSwitcher)
 	buildNavigationModeSwitch(handler, parsedConfig.Actors.MetaNavigationModeSwitcher)
 	buildLockSwitch(handler, parsedConfig.Actors.MetaLockerSwitcher)
@@ -22,6 +21,7 @@ func BuildActors(parsedConfig *config.Config, sensors map[string]sensor.Sensor, 
 	buildGfxWave(handler, parsedConfig.Actors.GfxWave)
 
 	//must be last
+	buildCombined(handler, parsedConfig.Actors.Combined)
 	buildConditional(handler, sensors, parsedConfig.Actors.Conditional)
 
 	return handler
