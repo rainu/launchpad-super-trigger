@@ -40,6 +40,10 @@ type Actors struct {
 	Command     map[string]CommandActor     `yaml:"command,omitempty" validate:"dive,keys,component_name,endkeys,required"`
 	Combined    map[string]CombinedActor    `yaml:"combined,omitempty" validate:"dive,keys,component_name,endkeys,required"`
 
+	MetaPageSwitcher           map[string]PageSwitchActor           `yaml:"metaSwitchPage,omitempty" validate:"dive,keys,component_name,endkeys,required"`
+	MetaNavigationModeSwitcher map[string]NavigationModeSwitchActor `yaml:"metaSwitchNavigationMode,omitempty" validate:"dive,keys,component_name,endkeys,required"`
+	MetaLockerSwitcher         map[string]LockSwitchActor           `yaml:"metaSwitchLock,omitempty" validate:"dive,keys,component_name,endkeys,required"`
+
 	GfxBlink map[string]GfxBlinkActor `yaml:"gfxBlink,omitempty" validate:"dive,keys,component_name,endkeys,required"`
 	GfxWave  map[string]GfxWaveActor  `yaml:"gfxWave,omitempty" validate:"dive,keys,component_name,endkeys,required"`
 }
@@ -67,6 +71,18 @@ type MQTTActor struct {
 
 type ConditionalActor struct {
 	Conditions []Condition `yaml:"conditions" validate:"dive,required"`
+}
+
+type PageSwitchActor struct {
+	Target PageNumber `yaml:"target" validate:"pagenumber,required"`
+}
+
+type NavigationModeSwitchActor struct {
+	NavigationMode byte `yaml:"mode" validate:"oneof=0 1"`
+}
+
+type LockSwitchActor struct {
+	Lock bool `yaml:"lock"`
 }
 
 type Condition struct {

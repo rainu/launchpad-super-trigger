@@ -13,13 +13,13 @@ type handlerId struct {
 
 type Handler interface {
 	// OnTrigger will called each time a hit was made.
-	OnTrigger(Lighter, PageNumber, int, int) error
+	OnTrigger(Lighter, *LaunchpadSuperTrigger, PageNumber, int, int) error
 
 	// OnPageEnter will called each time a page will be entered.
-	OnPageEnter(Lighter, PageNumber) error
+	OnPageEnter(Lighter, *LaunchpadSuperTrigger, PageNumber) error
 
 	// OnPageLeave will called each time a page will be leaved.
-	OnPageLeave(Lighter, PageNumber) error
+	OnPageLeave(Lighter, *LaunchpadSuperTrigger, PageNumber) error
 }
 
 type PageHandleFunc func(lighter Lighter, page PageNumber) error
@@ -37,10 +37,10 @@ type TriggerDispatcher struct {
 	firstEnterCalled bool
 }
 
-func (t *TriggerDispatcher) Handle(lighter Lighter, page PageNumber, x, y int) error {
+func (t *TriggerDispatcher) Handle(lighter Lighter, lst *LaunchpadSuperTrigger, page PageNumber, x, y int) error {
 	if !t.firstEnterCalled {
 		if handler := t.lookupPageHandler(page); handler != nil {
-			if err := handler.OnPageEnter(lighter, page); err != nil {
+			if err := handler.OnPageEnter(lighter, lst, page); err != nil {
 				return err
 			}
 		}
@@ -53,7 +53,7 @@ func (t *TriggerDispatcher) Handle(lighter Lighter, page PageNumber, x, y int) e
 
 		//change page
 		if handler := t.lookupPageHandler(lastPage); handler != nil {
-			if err := handler.OnPageLeave(lighter, lastPage); err != nil {
+			if err := handler.OnPageLeave(lighter, lst, lastPage); err != nil {
 				return err
 			}
 		}
@@ -61,7 +61,7 @@ func (t *TriggerDispatcher) Handle(lighter Lighter, page PageNumber, x, y int) e
 			return err
 		}
 		if handler := t.lookupPageHandler(page); handler != nil {
-			if err := handler.OnPageEnter(lighter, page); err != nil {
+			if err := handler.OnPageEnter(lighter, lst, page); err != nil {
 				return err
 			}
 		}
@@ -74,7 +74,7 @@ func (t *TriggerDispatcher) Handle(lighter Lighter, page PageNumber, x, y int) e
 
 	if handler := t.lookupTriggerHandler(page, x, y); handler != nil {
 		zap.L().Debug(fmt.Sprintf("Call handler for page %d %d:%d", page, x, y))
-		return handler.OnTrigger(lighter, page, x, y)
+		return handler.OnTrigger(lighter, lst, page, x, y)
 	}
 	zap.L().Warn(fmt.Sprintf("No handler found for page %d %d:%d", page, x, y))
 
@@ -123,21 +123,21 @@ func (h handlerId) Id() string {
 	return fmt.Sprintf("%d_%d_%d", h.Number, h.X, h.Y)
 }
 
-func (s *SimpleHandler) OnTrigger(lighter Lighter, page PageNumber, x, y int) error {
+func (s *SimpleHandler) OnTrigger(lighter Lighter, lst *LaunchpadSuperTrigger, page PageNumber, x, y int) error {
 	if s.TriggerFn != nil {
-		return s.TriggerFn(lighter, page, x, y)
+		return s.TriggerFn(lighter, lst, page, x, y)
 	}
 	return nil
 }
 
-func (s *SimpleHandler) OnPageEnter(lighter Lighter, page PageNumber) error {
+func (s *SimpleHandler) OnPageEnter(lighter Lighter, lst *LaunchpadSuperTrigger, page PageNumber) error {
 	if s.PageEnterFn != nil {
 		return s.PageEnterFn(lighter, page)
 	}
 	return nil
 }
 
-func (s *SimpleHandler) OnPageLeave(lighter Lighter, page PageNumber) error {
+func (s *SimpleHandler) OnPageLeave(lighter Lighter, lst *LaunchpadSuperTrigger, page PageNumber) error {
 	if s.PageLeaveFn != nil {
 		return s.PageLeaveFn(lighter, page)
 	}

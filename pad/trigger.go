@@ -11,7 +11,7 @@ import (
 
 // TriggerHandleFunc will called each time a hit was made.
 // If the hit was outside the trigger area x and y will be 255!
-type TriggerHandleFunc func(lighter Lighter, page PageNumber, x, y int) error
+type TriggerHandleFunc func(lighter Lighter, lst *LaunchpadSuperTrigger, page PageNumber, x, y int) error
 
 type LaunchpadSuperTrigger struct {
 	pad         Launchpad
@@ -75,7 +75,7 @@ func (l *LaunchpadSuperTrigger) WaitForConnectionLost(ctx context.Context) {
 }
 
 func (l *LaunchpadSuperTrigger) Run(ctx context.Context) {
-	if err := l.handle(l.lighter, l.currentPage.Number(), 255, 255); err != nil {
+	if err := l.handle(l.lighter, l, l.currentPage.Number(), 255, 255); err != nil {
 		zap.L().Error("Error while handling hit!", zap.Error(err))
 	}
 
@@ -99,7 +99,7 @@ func (l *LaunchpadSuperTrigger) Run(ctx context.Context) {
 				l.applyPage(hit)
 
 				zap.L().Info(fmt.Sprintf("Switched to page: %d", l.currentPage.Number()))
-				if err := l.handle(l.lighter, l.currentPage.Number(), 255, 255); err != nil {
+				if err := l.handle(l.lighter, l, l.currentPage.Number(), 255, 255); err != nil {
 					zap.L().Error("Error while handling hit!", zap.Error(err))
 				}
 			} else if IsPadHit(hit) {
@@ -108,7 +108,7 @@ func (l *LaunchpadSuperTrigger) Run(ctx context.Context) {
 					continue
 				}
 
-				if err := l.handle(l.lighter, l.currentPage.Number(), hit.X, hit.Y); err != nil {
+				if err := l.handle(l.lighter, l, l.currentPage.Number(), hit.X, hit.Y); err != nil {
 					zap.L().Error("Error while handling hit!", zap.Error(err))
 				}
 			} else if IsSpecialVol(hit) {
@@ -136,6 +136,27 @@ func (l *LaunchpadSuperTrigger) Run(ctx context.Context) {
 			return
 		}
 	}
+}
+
+func (l *LaunchpadSuperTrigger) SwitchLock(lock bool) error {
+	l.specials.locked = lock
+	return l.specials.lightArm(l.pad)
+}
+
+func (l *LaunchpadSuperTrigger) SwitchNavigationMode(mode byte) error {
+	return l.specials.SetPageNavigationMode(mode, l.pad)
+}
+
+func (l *LaunchpadSuperTrigger) SwitchPage(page PageNumber) error {
+	if err := l.currentPage.Goto(page, l.lighter); err != nil {
+		return err
+	}
+
+	if err := l.handle(l.lighter, l, l.currentPage.Number(), 255, 255); err != nil {
+		return err
+	}
+
+	return nil
 }
 
 func (l *LaunchpadSuperTrigger) applyPage(hit launchpad.Hit) {

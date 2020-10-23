@@ -15,6 +15,9 @@ func BuildActors(parsedConfig *config.Config, sensors map[string]sensor.Sensor, 
 	buildMqtt(handler, parsedConfig.Actors.Mqtt, mqttConnections, templateEngine)
 	buildCommand(handler, parsedConfig.Actors.Command)
 	buildCombined(handler, parsedConfig.Actors.Combined)
+	buildPageSwitch(handler, parsedConfig.Actors.MetaPageSwitcher)
+	buildNavigationModeSwitch(handler, parsedConfig.Actors.MetaNavigationModeSwitcher)
+	buildLockSwitch(handler, parsedConfig.Actors.MetaLockerSwitcher)
 	buildGfxBlink(handler, parsedConfig.Actors.GfxBlink)
 	buildGfxWave(handler, parsedConfig.Actors.GfxWave)
 

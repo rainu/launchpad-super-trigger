@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"github.com/rainu/launchpad-super-trigger/actor"
+	"github.com/rainu/launchpad-super-trigger/actor/meta"
 	"github.com/rainu/launchpad-super-trigger/config"
 	configSensor "github.com/rainu/launchpad-super-trigger/config/sensor"
 	"github.com/rainu/launchpad-super-trigger/pad"
@@ -11,6 +12,7 @@ import (
 	"github.com/rainu/launchpad-super-trigger/sensor"
 	"github.com/rainu/launchpad-super-trigger/sensor/data_extractor"
 	"go.uber.org/zap"
+	"reflect"
 	"strings"
 	"sync"
 )
@@ -64,12 +66,22 @@ func (p *pageHandler) Init(actors map[string]actor.Actor, sensors map[string]con
 				p.colorSettings[c] = &defaultColorSettings
 			}
 
+			//special use case: if this actor is an page switcher
+			if reflect.TypeOf(actors[trigger.Actor]) == reflect.TypeOf(&meta.LaunchpadSuperTriggerPageSwitch{}) {
+				p.colorSettings[c] = &ColorSettings{
+					Ready:    p.colorSettings[c].Ready,
+					Progress: p.colorSettings[c].Progress,
+					Failed:   p.colorSettings[c].Failed,
+					Success:  nil,
+				}
+			}
+
 			p.actors[c] = actors[trigger.Actor]
 		}
 	}
 }
 
-func (p *pageHandler) OnTrigger(lighter pad.Lighter, number pad.PageNumber, x int, y int) error {
+func (p *pageHandler) OnTrigger(lighter pad.Lighter, lst *pad.LaunchpadSuperTrigger, number pad.PageNumber, x int, y int) error {
 	p.activeProcessMutex.RLock()
 	_, found := p.activeProcess[coord{x, y}]
 	p.activeProcessMutex.RUnlock()
@@ -95,6 +107,7 @@ func (p *pageHandler) OnTrigger(lighter pad.Lighter, number pad.PageNumber, x in
 			}
 			err := delegate.Do(actor.Context{
 				Lighter: lighter,
+				LST:     lst,
 				Context: ctx,
 				Page:    number,
 				HitX:    x,
@@ -110,8 +123,12 @@ func (p *pageHandler) OnTrigger(lighter pad.Lighter, number pad.PageNumber, x in
 				}
 			} else {
 				if colorEnabled {
-					if err := p.colorSettings[coord{x, y}].Success.Light(lighter, x, y); err != nil {
-						zap.L().Debug("Could not light the pad!", zap.Error(err))
+					successColor := p.colorSettings[coord{x, y}].Success
+
+					if successColor != nil {
+						if err := successColor.Light(lighter, x, y); err != nil {
+							zap.L().Debug("Could not light the pad!", zap.Error(err))
+						}
 					}
 				}
 			}
@@ -125,7 +142,7 @@ func (p *pageHandler) OnTrigger(lighter pad.Lighter, number pad.PageNumber, x in
 	return nil
 }
 
-func (p *pageHandler) OnPageEnter(lighter pad.Lighter, number pad.PageNumber) error {
+func (p *pageHandler) OnPageEnter(lighter pad.Lighter, lst *pad.LaunchpadSuperTrigger, number pad.PageNumber) error {
 	p.lastLighter = lighter
 
 	for c, settings := range p.colorSettings {
@@ -150,7 +167,7 @@ func (p *pageHandler) OnPageEnter(lighter pad.Lighter, number pad.PageNumber) er
 	return nil
 }
 
-func (p *pageHandler) OnPageLeave(lighter pad.Lighter, number pad.PageNumber) error {
+func (p *pageHandler) OnPageLeave(lighter pad.Lighter, lst *pad.LaunchpadSuperTrigger, number pad.PageNumber) error {
 	p.lastLighter = nil
 
 	//on page leave close all running processes

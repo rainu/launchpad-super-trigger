@@ -1,16 +1,21 @@
 # launchpad-super-trigger
-Trigger application for the Novation Launchpad S
+Trigger application for the Novation "Launchpad S" and "Launchpad MK2"
 
 # Get the Binary
 
 Before you can build the binary, you have to install the **rtmidi** library on your machine:
-```
-$ apt-get install librtmidi-dev
+```bash
+apt-get install librtmidi-dev
 ```
 
 Now you can build it on your own (you will need [golang](https://golang.org/) installed):
 ```bash
 go build -a -installsuffix cgo ./cmd/lst/
+```
+
+Then start the application:
+```bash
+./launchpad-super-trigger -config config.yaml
 ```
 
 # ConfigFile
@@ -104,6 +109,12 @@ layout:
 | actors.gfxWave[*name*].square | false | false | Should the waveform be square? |
 | actors.gfxWave[*name*].color | 0,3 | false | The color of the wave. |
 | actors.gfxWave[*name*].delay | 500ms | false | The delay between wave steps. |
+| actors.metaSwitchPage | - | false | Contains all available page switch actors. A page switch actor can switch to a given page. |
+| actors.metaSwitchPage[*name*].target | - | true | The page you want to switch to.  |
+| actors.metaSwitchNavigationMode | - | false | Contains all available navigation mode switch actors. A navigation mode switch actor can switch to a given navigation mode. |
+| actors.metaSwitchNavigationMode[*name*].mode | - | true | The page navigation mode: 0 => binary mode; 1 => toggle mode |
+| actors.metaSwitchLock | - | false | Contains all available lock switch actors. A lock switch actor can switch to a given lock state (arm and unarmed). |
+| actors.metaSwitchLock[*name*].lock | - | true | Should the launchpad be armed (true) or unarmed (false)? |
 | connections | - | false | Contains all available connections, which can be used by different actors. |
 | connections.mqtt | - | false | Contains all available MQTT connections. |
 | connections.mqtt[*name*].broker | - | **true** | The url of the MQTT-Broker. |

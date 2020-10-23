@@ -7,6 +7,7 @@ import (
 
 type Context struct {
 	Lighter pad.Lighter
+	LST     *pad.LaunchpadSuperTrigger
 	Context context.Context
 	Page    pad.PageNumber
 	HitX    int
