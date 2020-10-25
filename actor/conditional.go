@@ -30,6 +30,16 @@ func (c *Conditional) AddCondition(
 	})
 }
 
+func (c *Conditional) HasActor(clb func(Actor) bool) bool {
+	for _, condition := range c.conditions {
+		if clb(condition.actor) {
+			return true
+		}
+	}
+
+	return false
+}
+
 func (c *Conditional) Do(ctx Context) error {
 	for _, condition := range c.conditions {
 		lm := condition.sensor.LastMessage()

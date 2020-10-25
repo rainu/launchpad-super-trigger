@@ -6,12 +6,26 @@ import (
 	"sync"
 )
 
+type MetaActor interface {
+	HasActor(func(Actor) bool) bool
+}
+
 type Sequential struct {
 	delegates []Actor
 }
 
 func (s *Sequential) AddActor(actor Actor) {
 	s.delegates = append(s.delegates, actor)
+}
+
+func (s *Sequential) HasActor(clb func(Actor) bool) bool {
+	for _, delegate := range s.delegates {
+		if clb(delegate) {
+			return true
+		}
+	}
+
+	return false
 }
 
 func (s *Sequential) Do(ctx Context) error {
@@ -30,6 +44,16 @@ type Parallel struct {
 
 func (p *Parallel) AddActor(actor Actor) {
 	p.delegates = append(p.delegates, actor)
+}
+
+func (p *Parallel) HasActor(clb func(Actor) bool) bool {
+	for _, delegate := range p.delegates {
+		if clb(delegate) {
+			return true
+		}
+	}
+
+	return false
 }
 
 func (p *Parallel) Do(ctx Context) error {

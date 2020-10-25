@@ -67,7 +67,32 @@ func (p *pageHandler) Init(actors map[string]actor.Actor, sensors map[string]con
 			}
 
 			//special use case: if this actor is an page switcher
+			hasPageSwitch := false
 			if reflect.TypeOf(actors[trigger.Actor]) == reflect.TypeOf(&meta.LaunchpadSuperTriggerPageSwitch{}) {
+				hasPageSwitch = true
+			} else if reflect.TypeOf(actors[trigger.Actor]) == reflect.TypeOf(&actor.Sequential{}) ||
+				reflect.TypeOf(actors[trigger.Actor]) == reflect.TypeOf(&actor.Parallel{}) ||
+				reflect.TypeOf(actors[trigger.Actor]) == reflect.TypeOf(&actor.Conditional{}) {
+
+				var metaActor actor.MetaActor
+				var ok bool
+
+				metaActor, ok = actors[trigger.Actor].(*actor.Sequential)
+				if !ok {
+					metaActor, ok = actors[trigger.Actor].(*actor.Parallel)
+					if !ok {
+						metaActor = actors[trigger.Actor].(*actor.Conditional)
+					}
+				}
+
+				//check if any underlying actor is an page switcher
+				hasPageSwitch = metaActor.HasActor(func(actor actor.Actor) bool {
+					return reflect.TypeOf(actor) == reflect.TypeOf(meta.LaunchpadSuperTriggerPageSwitch{}) ||
+						reflect.TypeOf(actor) == reflect.TypeOf(&meta.LaunchpadSuperTriggerPageSwitch{})
+				})
+			}
+
+			if hasPageSwitch {
 				p.colorSettings[c] = &ColorSettings{
 					Ready:    p.colorSettings[c].Ready,
 					Progress: p.colorSettings[c].Progress,
